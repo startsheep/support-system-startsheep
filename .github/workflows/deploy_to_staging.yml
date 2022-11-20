@@ -33,7 +33,9 @@ jobs:
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
-        run: vendor/bin/phpunit
+        run: |
+          php artisan migrate --seed
+          vendor/bin/phpunit
       # - uses: actions/setup-node@master
       # - name: Build vue js
       #   run: |
