@@ -6,11 +6,10 @@ use App\Models\Ticket;
 use Database\Seeders\Traits\DisableForeignKey;
 use Database\Seeders\Traits\TruncateTable;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class TicketSeeder extends Seeder
 {
-    use TruncateTable, DisableForeignKey;
-
     protected $model;
 
     public function __construct(Ticket $model)
@@ -80,5 +79,20 @@ class TicketSeeder extends Seeder
             $this->model->create($ticket);
         }
         $this->enableForeignKeys();
+    }
+
+    protected function disableForeignKeys()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    }
+
+    protected function enableForeignKeys()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
+
+    protected function truncate($table)
+    {
+        DB::table($table)->truncate();
     }
 }
