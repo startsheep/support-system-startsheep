@@ -36,6 +36,22 @@ jobs:
         run: |
           php artisan migrate --seed
           vendor/bin/phpunit
+      - uses: actions/setup-node@master
+      - name: Build vue js
+        run: |
+          npm install
+          npm run build
+      - name: Zip folder build
+        run: |
+          cd public/
+          rm -rf build.zip
+          zip -r -q build.zip build
+      - uses: EndBug/add-and-commit@v9
+        with:
+          pull: "--rebase --autostash"
+          author_name: "hakim-asrori"
+          author_email: "saneglos005@gmail.com"
+          message: "build vue js"
       # - uses: actions/setup-node@master
       # - name: Build vue js
       #   run: |
