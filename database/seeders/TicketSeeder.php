@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Http\Traits\DisableForeignKey;
+use App\Http\Traits\TruncateTable;
 use App\Models\Ticket;
-use Database\Seeders\Traits\DisableForeignKey;
-use Database\Seeders\Traits\TruncateTable;
 use Illuminate\Database\Seeder;
 
 class TicketSeeder extends Seeder

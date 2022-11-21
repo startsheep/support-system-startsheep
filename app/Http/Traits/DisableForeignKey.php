@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\Traits;
+namespace App\Http\Traits;
 
 use Illuminate\Support\Facades\DB;
 
