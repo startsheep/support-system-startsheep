@@ -74,21 +74,9 @@ class TicketSeeder extends Seeder
             ],
         ];
 
-        $this->disableForeignKeys();
         foreach ($tickets as $ticket) {
             $this->model->create($ticket);
         }
-        $this->enableForeignKeys();
-    }
-
-    protected function disableForeignKeys()
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-    }
-
-    protected function enableForeignKeys()
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 
     protected function truncate($table)
