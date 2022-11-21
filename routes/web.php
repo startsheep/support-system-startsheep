@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/{any}', [PageController::class, 'index'])->where('any', '^(?!admin|auth).*$');
+Route::get('/admin/{any}', [PageController::class, 'admin']);
+Route::get('/auth/{any}', [PageController::class, 'auth']);
