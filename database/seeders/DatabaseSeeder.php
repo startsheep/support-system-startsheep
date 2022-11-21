@@ -21,5 +21,9 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'admin@mailinator.com',
         ]);
+
+        $this->call([
+            TicketSeeder::class
+        ]);
     }
 }
