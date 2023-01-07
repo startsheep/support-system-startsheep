@@ -54,4 +54,24 @@ class User extends Authenticatable
     {
         return $this->attributes['password'] = Hash::make($password);
     }
+
+    public function getRoleAdmin()
+    {
+        return self::ROLE_ADMIN;
+    }
+
+    public function getRoleStaff()
+    {
+        return self::ROLE_STAFF;
+    }
+
+    public function getRoleCustomer()
+    {
+        return self::ROLE_CUSTOMER;
+    }
+
+    public function staffHasProject()
+    {
+        return $this->hasMany(UserHasProject::class, 'user_id', 'id');
+    }
 }

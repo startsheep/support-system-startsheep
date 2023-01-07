@@ -36,7 +36,7 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        $project = $this->projectService->find($id);
+        $project = $this->projectService->findOrFail($id);
 
         return new ProjectDetail($project);
     }

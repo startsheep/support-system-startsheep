@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\Admin\CreateRequest;
+use App\Http\Requests\User\Staff\CreateRequest;
 use App\Http\Requests\User\Admin\UpdateRequest;
 use App\Http\Resources\User\Staff\StaffCollection;
 use App\Http\Resources\User\Staff\StaffDetail;
 use App\Http\Searches\User\StaffSearch;
+use App\Http\Services\Staff\StaffService;
 use App\Http\Services\User\UserService;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +18,7 @@ class StaffController extends Controller
 {
     protected $userService;
 
-    public function __construct(UserService $userService)
+    public function __construct(StaffService $userService)
     {
         $this->userService = $userService;
     }
@@ -39,6 +41,9 @@ class StaffController extends Controller
     public function show($id)
     {
         $staff = $this->userService->find($id);
+        if (!$staff->hasRole(User::ROLE_STAFF)) {
+            abort(404);
+        }
 
         return new StaffDetail($staff);
     }

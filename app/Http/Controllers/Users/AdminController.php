@@ -8,7 +8,9 @@ use App\Http\Requests\User\Admin\UpdateRequest;
 use App\Http\Resources\User\Admin\AdminCollection;
 use App\Http\Resources\User\Admin\AdminDetail;
 use App\Http\Searches\User\AdminSearch;
+use App\Http\Services\Admin\AdminService;
 use App\Http\Services\User\UserService;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +18,7 @@ class AdminController extends Controller
 {
     protected $userService;
 
-    public function __construct(UserService $userService)
+    public function __construct(AdminService $userService)
     {
         $this->userService = $userService;
     }
@@ -38,7 +40,10 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        $admin = $this->userService->find($id);
+        $admin = $this->userService->findOrFail($id);
+        if (!$admin->hasRole(User::ROLE_ADMIN)) {
+            abort(404);
+        }
 
         return new AdminDetail($admin);
     }

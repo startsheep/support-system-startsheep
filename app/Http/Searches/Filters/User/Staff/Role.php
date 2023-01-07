@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Searches\Filters\User\Admin;
+namespace App\Http\Searches\Filters\User\Staff;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +27,7 @@ class Role implements FilterContract
     public function handle(Builder $query, Closure $next)
     {
         $query->whereHas('roles', function ($query) {
-            $query->where('id', User::ROLE_ADMIN);
+            $query->where('id', User::ROLE_STAFF);
         });
 
         return $next($query);

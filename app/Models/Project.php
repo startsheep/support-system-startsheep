@@ -12,6 +12,11 @@ class Project extends Model
 
     protected $fillable = [
         'project_name',
-        'project_domain'
+        'project_domain',
     ];
+
+    public function userHasProject()
+    {
+        return $this->hasMany(UserHasProject::class, 'project_id', 'id');
+    }
 }
