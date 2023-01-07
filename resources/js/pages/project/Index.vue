@@ -1,28 +1,28 @@
 <script>
-import Loader from "../../../components/Loader.vue";
-import Pagination from "../../../components/Pagination.vue";
-import Delete from "../../../components/notifications/Detele.vue";
+import Loader from "../../components/Loader.vue";
+import Pagination from "../../components/Pagination.vue";
+import Delete from "../../components/notifications/Detele.vue";
 
 export default {
     data() {
         return {
-            admins: [],
-            metaPagination: {},
+            projects: [],
+            metaPagination: [],
             pagination: {
                 perPage: 10,
                 page: 1,
             },
 
             search: "",
-            isLoading: false,
             deleteId: null,
+            isLoading: false,
         };
     },
     mounted() {
-        this.getAdmins();
+        this.getProjects();
     },
     methods: {
-        getAdmins() {
+        getProjects() {
             this.isLoading = true;
 
             const params = [
@@ -30,29 +30,30 @@ export default {
                 `page=${this.pagination.page}`,
                 `search=${this.search}`,
             ].join("&");
+
             this.$store
-                .dispatch("getData", ["user/admin", params])
+                .dispatch("getData", ["project", params])
                 .then((response) => {
                     this.isLoading = false;
-                    this.admins = response.data;
+                    this.projects = response.data;
                     this.metaPagination = response.meta;
                 })
-                .catch((errors) => {
+                .catch((error) => {
                     this.isLoading = false;
-                    console.log(errors);
+                    console.log(error);
                 });
         },
-        deleteAdmin() {
+        deleteProject() {
             $("#deleteModal").modal("hide");
 
             this.isLoading = true;
 
             this.$store
-                .dispatch("deleteData", ["user/admin", this.deleteId])
+                .dispatch("deleteData", ["project", this.deleteId])
                 .then((response) => {
                     this.isLoading = false;
                     this.message = "data has been deleted";
-                    this.getAdmins();
+                    this.getProjects();
                     $("#successModal").modal("show");
                 })
                 .catch((error) => {
@@ -72,19 +73,11 @@ export default {
             this.deleteId = e;
             $("#deleteModal").modal("show");
         },
-        onSearch(e) {
-            setTimeout(() => {
-                this.getAdmins();
-            }, 1000);
-        },
-        onPageChange(event) {
-            this.pagination.page = event;
-            this.getAdmins();
-        },
     },
-    components: { Loader, Pagination, Delete },
+    components: { Pagination, Loader, Delete },
 };
 </script>
+
 <template>
     <h1 class="h3 mb-3">{{ this.$route.name }}</h1>
 
@@ -92,35 +85,14 @@ export default {
         <div class="col-12">
             <div class="card">
                 <Loader v-if="isLoading" />
-                <div class="card-header">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <router-link
-                                class="nav-link"
-                                :to="{ name: 'Admin' }"
-                                >Admin</router-link
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <router-link class="nav-link" to=""
-                                >Staff</router-link
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <router-link class="nav-link" to=""
-                                >Klien</router-link
-                            >
-                        </li>
-                    </ul>
-                </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <router-link
-                                :to="{ name: 'Create Admin' }"
+                                :to="{ name: 'Add More Project' }"
                                 class="btn btn-sm btn-primary mb-3"
                             >
-                                Create New Admin
+                                Add More Project
                             </router-link>
                         </div>
                         <div
@@ -147,33 +119,45 @@ export default {
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
+                                    <th>Project Name</th>
+                                    <th>Project Domain</th>
+                                    <th>Ticket</th>
+                                    <th>Customer PIC</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(admin, index) in admins"
+                                    v-for="(project, index) in projects"
                                     :key="index"
                                 >
-                                    <th v-html="iteration(index)"></th>
-                                    <td v-html="admin.name"></td>
-                                    <td v-html="admin.email"></td>
                                     <td>
                                         <router-link
                                             :to="{
-                                                name: 'Admin Edit',
-                                                params: { id: admin.id },
+                                                name: 'Project Detail',
+                                                params: { id: project.id },
                                             }"
-                                            class="btn btn-sm btn-warning me-2"
+                                            class="text-dark"
+                                            >{{
+                                                project.projectName
+                                            }}</router-link
                                         >
-                                            Edit
-                                        </router-link>
+                                    </td>
+                                    <td>
+                                        <a
+                                            :href="project.projectDomain"
+                                            target="_blank"
+                                            class="text-dark"
+                                        >
+                                            {{ project.projectDomain }}</a
+                                        >
+                                    </td>
+                                    <td v-html="0"></td>
+                                    <td v-html="0"></td>
+                                    <td>
                                         <button
                                             class="btn btn-sm btn-danger"
-                                            @click="onDelete(admin.id)"
+                                            @click="onDelete(project.id)"
                                         >
                                             Delete
                                         </button>
@@ -187,5 +171,5 @@ export default {
         </div>
     </div>
 
-    <Delete @onDelete="deleteAdmin" />
+    <Delete @onDelete="deleteProject" />
 </template>

@@ -1,30 +1,30 @@
 <script>
-import Loader from "../../../components/Loader.vue";
-import Success from "../../../components/notifications/Success.vue";
+import Error from "../../components/Error.vue";
+import Loader from "../../components/Loader.vue";
+import Success from "../../components/notifications/Success.vue";
 
 export default {
     props: ["id"],
     data() {
         return {
-            admin: {},
-            errors: [],
-
             isLoading: false,
-            message: "",
+
+            project: {},
+            errors: [],
         };
     },
     mounted() {
-        this.getAdmin();
+        this.getProject();
     },
     methods: {
-        getAdmin() {
+        getProject() {
             this.isLoading = true;
 
             this.$store
-                .dispatch("showData", ["user/admin", this.id])
+                .dispatch("showData", ["project", this.id])
                 .then((response) => {
                     this.isLoading = false;
-                    this.admin = response.data;
+                    this.project = response.data;
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -33,21 +33,20 @@ export default {
         },
         handleSubmit() {
             this.isLoading = true;
-
             this.$store
-                .dispatch("updateData", ["user/admin", this.id, this.admin])
+                .dispatch("updateData", ["project", this.id, this.project])
                 .then((response) => {
                     this.isLoading = false;
-                    this.message = "admin has been updated";
+                    this.message = "project has been updated";
                     $("#successModal").modal("show");
                 })
-                .catch((error) => {
+                .catch((errors) => {
                     this.isLoading = false;
-                    console.log(error);
+                    this.errors = errors.response.data.messages;
                 });
         },
     },
-    components: { Loader, Success },
+    components: { Success, Error, Loader },
 };
 </script>
 <template>
@@ -60,24 +59,31 @@ export default {
                     <Loader v-if="isLoading" />
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="name">Name</label>
+                            <label for="projectName">Project Name</label>
                             <input
-                                type="text"
-                                id="name"
+                                type="test"
+                                id="projectName"
                                 class="form-control"
-                                v-model="admin.name"
+                                v-model="project.projectName"
                             />
-                            <Error :errors="errors.name" v-if="errors.name" />
+                            <Error
+                                :errors="errors.projectName"
+                                v-if="errors.projectName"
+                            />
                         </div>
                         <div class="mb-3">
-                            <label for="email">Email</label>
+                            <label for="projectDomain">Project Domain</label>
                             <input
-                                type="email"
-                                id="email"
+                                type="url"
+                                id="projectDomain"
                                 class="form-control"
-                                v-model="admin.email"
+                                v-model="project.projectDomain"
+                                placeholder="http://localhost.test"
                             />
-                            <Error :errors="errors.email" v-if="errors.email" />
+                            <Error
+                                :errors="errors.projectDomain"
+                                v-if="errors.projectDomain"
+                            />
                         </div>
                     </div>
                     <div class="card-footer">
@@ -89,7 +95,7 @@ export default {
                         </button>
                         <router-link
                             class="btn btn-sm btn-warning"
-                            :to="{ name: 'Admin' }"
+                            :to="{ name: 'Project Detail', params: { id: id } }"
                             >Cancel</router-link
                         >
                     </div>
@@ -98,5 +104,8 @@ export default {
         </div>
     </div>
 
-    <Success :msg="message" :route="{ name: 'Admin' }" />
+    <Success
+        :msg="message"
+        :route="{ name: 'Project Detail', params: { id: id } }"
+    />
 </template>

@@ -1,29 +1,27 @@
 <script>
-import Error from "../../../components/Error.vue";
-import Loader from "../../../components/Loader.vue";
-import Success from "../../../components/notifications/Success.vue";
+import Error from "../../components/Error.vue";
+import Loader from "../../components/Loader.vue";
+import Success from "../../components/notifications/Success.vue";
+
 export default {
     data() {
         return {
-            form: {
-                email: "",
-                name: "",
-            },
-
-            errors: {},
-
             isLoading: false,
-            message: "",
+            form: {
+                projectName: "",
+                projectDomain: "",
+            },
+            errors: [],
         };
     },
     methods: {
         handleSubmit() {
             this.isLoading = true;
             this.$store
-                .dispatch("postData", ["user/admin", this.form])
+                .dispatch("postData", ["project", this.form])
                 .then((response) => {
                     this.isLoading = false;
-                    this.message = "admin has been created";
+                    this.message = "project has been added";
                     $("#successModal").modal("show");
                 })
                 .catch((errors) => {
@@ -32,7 +30,7 @@ export default {
                 });
         },
     },
-    components: { Error, Loader, Success },
+    components: { Success, Error, Loader },
 };
 </script>
 <template>
@@ -46,30 +44,37 @@ export default {
                     <div class="card-header">
                         <router-link
                             class="btn btn-sm btn-primary"
-                            :to="{ name: 'Admin' }"
+                            :to="{ name: 'Project' }"
                             >Back</router-link
                         >
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="name">Name</label>
+                            <label for="projectName">Project Name</label>
                             <input
-                                type="text"
-                                id="name"
+                                type="test"
+                                id="projectName"
                                 class="form-control"
-                                v-model="form.name"
+                                v-model="form.projectName"
                             />
-                            <Error :errors="errors.name" v-if="errors.name" />
+                            <Error
+                                :errors="errors.projectName"
+                                v-if="errors.projectName"
+                            />
                         </div>
                         <div class="mb-3">
-                            <label for="email">Email</label>
+                            <label for="projectDomain">Project Domain</label>
                             <input
-                                type="email"
-                                id="email"
+                                type="url"
+                                id="projectDomain"
                                 class="form-control"
-                                v-model="form.email"
+                                v-model="form.projectDomain"
+                                placeholder="http://localhost.test"
                             />
-                            <Error :errors="errors.email" v-if="errors.email" />
+                            <Error
+                                :errors="errors.projectDomain"
+                                v-if="errors.projectDomain"
+                            />
                         </div>
                     </div>
                     <div class="card-footer">
@@ -88,5 +93,5 @@ export default {
         </div>
     </div>
 
-    <Success :msg="message" :route="{ name: 'Admin' }" />
+    <Success :msg="message" :route="{ name: 'Project' }" />
 </template>
