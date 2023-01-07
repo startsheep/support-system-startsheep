@@ -19,7 +19,7 @@ const process = {
         showData(context, param) {
             return new Promise((resolve, reject) => {
                 Api.init();
-                Api.get(param[0] + "?" + param[1]).then(
+                Api.get(param[0] + "/" + param[1]).then(
                     (response) => {
                         resolve(response.data);
                     },
