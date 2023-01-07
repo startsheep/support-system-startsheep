@@ -1,16 +1,16 @@
 export default [
     {
-        path: "/ticket",
+        path: "/project",
         component: () => import("../../pages/ticket/Index.vue"),
-        name: "Ticket",
+        name: "Project",
         meta: {
             middleware: "auth",
         },
     },
     {
-        path: "/ticket/:id/detail",
+        path: "/ticket/:id/edit",
         component: () => import("../../pages/ticket/Show.vue"),
-        name: "Ticket Detail",
+        name: "Project Edit",
         meta: {
             middleware: "auth",
         },

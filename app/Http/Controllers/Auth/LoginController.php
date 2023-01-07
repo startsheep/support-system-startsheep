@@ -34,7 +34,7 @@ class LoginController extends Controller
             ], 400);
         }
 
-        $role = strtolower("Logged");
+        $role = strtolower($user->roles->pluck('name'));
 
         $token = $user->createToken('api', [$role]);
 
