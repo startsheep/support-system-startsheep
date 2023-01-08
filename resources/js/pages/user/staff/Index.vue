@@ -7,7 +7,7 @@ import UserNav from "../UserNav.vue";
 export default {
     data() {
         return {
-            admins: [],
+            staff: [],
             metaPagination: {},
             pagination: {
                 perPage: 10,
@@ -20,10 +20,10 @@ export default {
         };
     },
     mounted() {
-        this.getAdmins();
+        this.getStaff();
     },
     methods: {
-        getAdmins() {
+        getStaff() {
             this.isLoading = true;
 
             const params = [
@@ -32,10 +32,10 @@ export default {
                 `search=${this.search}`,
             ].join("&");
             this.$store
-                .dispatch("getData", ["user/admin", params])
+                .dispatch("getData", ["user/staff", params])
                 .then((response) => {
                     this.isLoading = false;
-                    this.admins = response.data;
+                    this.staff = response.data;
                     this.metaPagination = response.meta;
                 })
                 .catch((errors) => {
@@ -43,17 +43,17 @@ export default {
                     console.log(errors);
                 });
         },
-        deleteAdmin() {
+        deleteStaff() {
             $("#deleteModal").modal("hide");
 
             this.isLoading = true;
 
             this.$store
-                .dispatch("deleteData", ["user/admin", this.deleteId])
+                .dispatch("deleteData", ["user/staff", this.deleteId])
                 .then((response) => {
                     this.isLoading = false;
                     this.message = "data has been deleted";
-                    this.getAdmins();
+                    this.getStaff();
                     $("#successModal").modal("show");
                 })
                 .catch((error) => {
@@ -75,12 +75,12 @@ export default {
         },
         onSearch(e) {
             setTimeout(() => {
-                this.getAdmins();
+                this.getStaff();
             }, 1000);
         },
         onPageChange(event) {
             this.pagination.page = event;
-            this.getAdmins();
+            this.getStaff();
         },
     },
     components: { Loader, Pagination, Delete, UserNav },
@@ -100,10 +100,10 @@ export default {
                     <div class="d-flex justify-content-between">
                         <div>
                             <router-link
-                                :to="{ name: 'Create Admin' }"
+                                :to="{ name: 'Create Staff' }"
                                 class="btn btn-sm btn-primary mb-3"
                             >
-                                Create New Admin
+                                Create New Staff
                             </router-link>
                         </div>
                         <div
@@ -132,30 +132,37 @@ export default {
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>Project</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(admin, index) in admins"
+                                    v-for="(staff, index) in staff"
                                     :key="index"
                                 >
                                     <td>
                                         <img
                                             :src="
                                                 'https://ui-avatars.com/api/?background=random&size=30&rounded=true&length=2&name=' +
-                                                admin.name
+                                                staff.name
                                             "
                                             class="me-2"
                                         />
-                                        {{ admin.name }}
+                                        {{ staff.name }}
                                     </td>
-                                    <td v-html="admin.email"></td>
+                                    <td v-html="staff.email"></td>
+                                    <td
+                                        v-html="
+                                            staff.staffHasProject.project
+                                                .projectName
+                                        "
+                                    ></td>
                                     <td>
                                         <router-link
                                             :to="{
-                                                name: 'Admin Edit',
-                                                params: { id: admin.id },
+                                                name: 'Staff Edit',
+                                                params: { id: staff.id },
                                             }"
                                             class="btn btn-sm btn-warning me-2"
                                         >
@@ -163,7 +170,7 @@ export default {
                                         </router-link>
                                         <button
                                             class="btn btn-sm btn-danger"
-                                            @click="onDelete(admin.id)"
+                                            @click="onDelete(staff.id)"
                                         >
                                             Delete
                                         </button>
@@ -177,5 +184,5 @@ export default {
         </div>
     </div>
 
-    <Delete @onDelete="deleteAdmin" />
+    <Delete @onDelete="deleteStaff" />
 </template>

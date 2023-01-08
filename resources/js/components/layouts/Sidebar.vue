@@ -2,7 +2,7 @@
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar">
             <a class="sidebar-brand" href="index.html">
-                <span class="align-middle">My Portofolio</span>
+                <span class="align-middle">SSS</span>
             </a>
 
             <ul class="sidebar-nav">

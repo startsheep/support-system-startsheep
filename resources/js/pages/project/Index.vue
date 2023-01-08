@@ -153,7 +153,7 @@ export default {
                                         >
                                     </td>
                                     <td v-html="0"></td>
-                                    <td v-html="0"></td>
+                                    <td v-html="project.countCustomer"></td>
                                     <td>
                                         <button
                                             class="btn btn-sm btn-danger"

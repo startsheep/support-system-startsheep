@@ -7,7 +7,7 @@ import UserNav from "../UserNav.vue";
 export default {
     data() {
         return {
-            admins: [],
+            customers: [],
             metaPagination: {},
             pagination: {
                 perPage: 10,
@@ -20,10 +20,10 @@ export default {
         };
     },
     mounted() {
-        this.getAdmins();
+        this.getCustomers();
     },
     methods: {
-        getAdmins() {
+        getCustomers() {
             this.isLoading = true;
 
             const params = [
@@ -31,11 +31,12 @@ export default {
                 `page=${this.pagination.page}`,
                 `search=${this.search}`,
             ].join("&");
+
             this.$store
-                .dispatch("getData", ["user/admin", params])
+                .dispatch("getData", ["user/customer", params])
                 .then((response) => {
                     this.isLoading = false;
-                    this.admins = response.data;
+                    this.customers = response.data;
                     this.metaPagination = response.meta;
                 })
                 .catch((errors) => {
@@ -43,17 +44,17 @@ export default {
                     console.log(errors);
                 });
         },
-        deleteAdmin() {
+        customerDelete() {
             $("#deleteModal").modal("hide");
 
             this.isLoading = true;
 
             this.$store
-                .dispatch("deleteData", ["user/admin", this.deleteId])
+                .dispatch("deleteData", ["user/customer", this.deleteId])
                 .then((response) => {
                     this.isLoading = false;
                     this.message = "data has been deleted";
-                    this.getAdmins();
+                    this.getCustomers();
                     $("#successModal").modal("show");
                 })
                 .catch((error) => {
@@ -75,12 +76,12 @@ export default {
         },
         onSearch(e) {
             setTimeout(() => {
-                this.getAdmins();
+                this.getCustomers();
             }, 1000);
         },
         onPageChange(event) {
             this.pagination.page = event;
-            this.getAdmins();
+            this.getCustomers();
         },
     },
     components: { Loader, Pagination, Delete, UserNav },
@@ -100,10 +101,10 @@ export default {
                     <div class="d-flex justify-content-between">
                         <div>
                             <router-link
-                                :to="{ name: 'Create Admin' }"
+                                :to="{ name: 'Create Customer' }"
                                 class="btn btn-sm btn-primary mb-3"
                             >
-                                Create New Admin
+                                Create New Customer
                             </router-link>
                         </div>
                         <div
@@ -132,30 +133,37 @@ export default {
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>Project</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(admin, index) in admins"
+                                    v-for="(customer, index) in customers"
                                     :key="index"
                                 >
                                     <td>
                                         <img
                                             :src="
                                                 'https://ui-avatars.com/api/?background=random&size=30&rounded=true&length=2&name=' +
-                                                admin.name
+                                                customer.name
                                             "
                                             class="me-2"
                                         />
-                                        {{ admin.name }}
+                                        {{ customer.name }}
                                     </td>
-                                    <td v-html="admin.email"></td>
+                                    <td v-html="customer.email"></td>
+                                    <td
+                                        v-html="
+                                            customer.customerHasProject.project
+                                                .projectName
+                                        "
+                                    ></td>
                                     <td>
                                         <router-link
                                             :to="{
-                                                name: 'Admin Edit',
-                                                params: { id: admin.id },
+                                                name: 'Customer Edit',
+                                                params: { id: customer.id },
                                             }"
                                             class="btn btn-sm btn-warning me-2"
                                         >
@@ -163,7 +171,7 @@ export default {
                                         </router-link>
                                         <button
                                             class="btn btn-sm btn-danger"
-                                            @click="onDelete(admin.id)"
+                                            @click="onDelete(customer.id)"
                                         >
                                             Delete
                                         </button>
@@ -177,5 +185,5 @@ export default {
         </div>
     </div>
 
-    <Delete @onDelete="deleteAdmin" />
+    <Delete @onDelete="customerDelete" />
 </template>

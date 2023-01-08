@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Staff\CreateRequest;
-use App\Http\Requests\User\Admin\UpdateRequest;
+use App\Http\Requests\User\Staff\UpdateRequest;
 use App\Http\Resources\User\Staff\StaffCollection;
 use App\Http\Resources\User\Staff\StaffDetail;
 use App\Http\Searches\User\StaffSearch;

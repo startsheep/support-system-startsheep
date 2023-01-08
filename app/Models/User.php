@@ -72,6 +72,11 @@ class User extends Authenticatable
 
     public function staffHasProject()
     {
-        return $this->hasMany(UserHasProject::class, 'user_id', 'id');
+        return $this->hasOne(UserHasProject::class, 'user_id', 'id');
+    }
+
+    public function customerHasProject()
+    {
+        return $this->hasOne(UserHasProject::class, 'user_id', 'id');
     }
 }

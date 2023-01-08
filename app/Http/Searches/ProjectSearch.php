@@ -2,6 +2,7 @@
 
 namespace App\Http\Searches;
 
+use App\Http\Searches\Filters\Project\Query;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +16,9 @@ class ProjectSearch extends HttpSearch
 
     protected function filters(): array
     {
-        return [];
+        return [
+            Query::class
+        ];
     }
 
     protected function thenReturn($projectSearch)

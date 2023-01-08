@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\User\Staff;
+namespace App\Http\Requests\User\Customer;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
-class CreateRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email,' . $this->route('id'),
             'name' => 'required|string',
             'project_id' => 'required|integer|exists:projects,id',
         ];
