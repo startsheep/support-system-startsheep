@@ -2,6 +2,7 @@
 
 namespace App\Http\Searches;
 
+use App\Http\Searches\Filters\Ticket\Project;
 use App\Http\Searches\Filters\Ticket\Search;
 use App\Http\Searches\Filters\Ticket\Sort;
 use App\Models\Ticket;
@@ -19,7 +20,8 @@ class TicketSearch extends HttpSearch
     {
         return [
             Search::class,
-            Sort::class
+            Sort::class,
+            Project::class,
         ];
     }
 

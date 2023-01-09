@@ -4,7 +4,7 @@ namespace App\Http\Services\Ticket;
 
 use LaravelEasyRepository\Service;
 use App\Http\Repositories\Ticket\TicketRepository;
-use App\Models\Ticket;
+use App\Models\TicketStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,7 +25,7 @@ class TicketServiceImplement extends Service implements TicketService
     public function create($attributes)
     {
         $attributes['ticket_code'] = $this->mainRepository->codeTicket();
-        $attributes['ticket_status'] = Ticket::STATUS_OPEN;
+        $attributes['ticket_status'] = TicketStatus::OPEN;
 
         $ticket = $this->mainRepository->create($attributes);
 

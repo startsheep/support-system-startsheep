@@ -22,7 +22,8 @@ class ProjectCollection extends ResourceCollection
                 'id' => $project->id,
                 'project_name' => $project->project_name,
                 'project_domain' => $project->project_domain,
-                'count_customer' => $this->countCustomer($project),
+                'count_customer' => $project->countCustomer(),
+                'count_ticket' => $project->countTicket(),
                 'created_at' => $project->created_at,
                 'updated_at' => $project->updated_at,
                 'deleted_at' => $project->deleted_at,
@@ -30,17 +31,5 @@ class ProjectCollection extends ResourceCollection
         }
 
         return $data;
-    }
-
-    protected function countCustomer($project)
-    {
-        $user = [];
-        foreach ($project->userHasProject as $userHasProject) {
-            if ($userHasProject->user->hasRole(User::ROLE_CUSTOMER)) {
-                $user[] = $userHasProject->user;
-            }
-        }
-
-        return count($user);
     }
 }

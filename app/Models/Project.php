@@ -19,4 +19,21 @@ class Project extends Model
     {
         return $this->hasMany(UserHasProject::class, 'project_id', 'id');
     }
+
+    public function countCustomer()
+    {
+        $user = [];
+        foreach ($this->userHasProject as $userHasProject) {
+            if ($userHasProject->user->hasRole(User::ROLE_CUSTOMER)) {
+                $user[] = $userHasProject->user;
+            }
+        }
+
+        return count($user);
+    }
+
+    public function countTicket()
+    {
+        return $this->hasMany(Ticket::class, 'project_id', 'id')->count();
+    }
 }

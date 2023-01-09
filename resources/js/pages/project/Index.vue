@@ -157,7 +157,7 @@ export default {
                                             {{ project.projectDomain }}</a
                                         >
                                     </td>
-                                    <td v-html="0"></td>
+                                    <td v-html="project.countTicket"></td>
                                     <td v-html="project.countCustomer"></td>
                                     <td>
                                         <button

@@ -1,5 +1,6 @@
 <script>
 import Loader from "../../components/Loader.vue";
+import Ticket from "./components/Ticket.vue";
 
 export default {
     props: ["id"],
@@ -29,15 +30,20 @@ export default {
                 });
         },
     },
-    components: { Loader },
+    components: { Loader, Ticket },
 };
 </script>
 <template>
-    <h1 class="h3 mb-3">{{ this.$route.name + " " + project.projectName }}</h1>
-
-    <router-link class="btn btn-sm btn-primary mb-3" :to="{ name: 'Project' }"
-        >Back</router-link
-    >
+    <div class="d-flex">
+        <router-link class="text-dark mb-3 me-2" :to="{ name: 'Project' }"
+            ><span class="material-symbols-outlined">
+                chevron_left
+            </span></router-link
+        >
+        <h1 class="h3 mb-3">
+            {{ this.$route.name + " " + project.projectName }}
+        </h1>
+    </div>
 
     <div class="row">
         <div class="col-lg-4">
@@ -62,7 +68,7 @@ export default {
                     <div>
                         <router-link
                             :to="{ name: 'Edit Project', params: { id: id } }"
-                            class="btn btn-sm btn-warning form-control"
+                            class="btn btn-warning form-control"
                         >
                             Edit
                         </router-link>
@@ -72,29 +78,7 @@ export default {
         </div>
 
         <div class="col-lg-8">
-            <div class="card">
-                <div
-                    class="card-header d-flex justify-content-between align-items-center"
-                >
-                    <h5 class="card-title mb-0">Customer PIC</h5>
-                    <a class="btn btn-sm btn-primary">Add More PIC</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <Ticket :id="id" />
         </div>
     </div>
 </template>

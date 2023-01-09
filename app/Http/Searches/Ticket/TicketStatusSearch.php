@@ -11,7 +11,7 @@ class TicketStatusSearch extends HttpSearch
 
     protected function passable()
     {
-        return TicketStatus::query();
+        return TicketStatus::with(['ticket']);
     }
 
     protected function filters(): array

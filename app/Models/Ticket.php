@@ -12,16 +12,6 @@ class Ticket extends Model
 {
     use HasFactory, SoftDeletes, EntryAutomation;
 
-    const STATUS_OPEN = 1;
-
-    const STATUS_ON_HOLD = 2;
-
-    const STATUS_ON_PROGRESS = 3;
-
-    const STATUS_CLOSED = 4;
-
-    const STATUS_DONE = 5;
-
     protected $fillable = [
         'project_id',
         'staff_id',

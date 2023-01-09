@@ -45,19 +45,6 @@ export default {
                 this.getTickets();
             }, 1000);
         },
-        alertTicketStatus(ticket) {
-            if (ticket.status == "Open") {
-                return `<button class="btn rounded-pill btn-outline-primary" disabled>${ticket.status}</button>`;
-            } else if (ticket.status == "On Hold") {
-                return `<button class="btn rounded-pill btn-outline-secondary" disabled>${ticket.status}</button>`;
-            } else if (ticket.status == "On Progress") {
-                return `<button class="btn rounded-pill btn-outline-warning" disabled>${ticket.status}</button>`;
-            } else if (ticket.status == "Closed") {
-                return `<button class="btn rounded-pill btn-outline-danger" disabled>${ticket.status}</button>`;
-            } else if (ticket.status == "Done") {
-                return `<button class="btn rounded-pill btn-outline-success" disabled>${ticket.status}</button>`;
-            }
-        },
         alertTicketPriority(priority) {
             if (priority == "Minor") {
                 return `<div class="badge rounded bg-secondary">${priority}</div>`;
@@ -182,12 +169,14 @@ export default {
                                     <td
                                         class="text-center"
                                         v-if="ticket.ticketStatus"
-                                        v-html="
-                                            alertTicketStatus(
-                                                ticket.ticketStatus
-                                            )
-                                        "
-                                    ></td>
+                                    >
+                                        <button
+                                            class="btn rounded-pill"
+                                            disabled
+                                            :class="ticket.ticketStatus.color"
+                                            v-html="ticket.ticketStatus.status"
+                                        ></button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
