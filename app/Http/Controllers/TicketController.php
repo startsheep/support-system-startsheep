@@ -56,4 +56,11 @@ class TicketController extends Controller
             return $this->ticketService->delete($id);
         });
     }
+
+    public function multipleDestroy(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            return $this->ticketService->multipleDestroy($request->deleted_data);
+        });
+    }
 }

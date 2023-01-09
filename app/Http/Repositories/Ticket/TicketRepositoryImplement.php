@@ -25,6 +25,11 @@ class TicketRepositoryImplement extends Eloquent implements TicketRepository
         return $this->model->where($criteria)->first();
     }
 
+    public function getWhereIn(array $data)
+    {
+        return $this->model->whereIn('id', $data);
+    }
+
     public function codeTicket()
     {
         $number = '001';

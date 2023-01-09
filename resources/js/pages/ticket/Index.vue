@@ -133,6 +133,22 @@ export default {
                                             v-model="selectedCheckbox"
                                             :value="ticket.id"
                                             style="cursor: pointer"
+                                            v-if="ticket.ticketStatus"
+                                            :disabled="
+                                                ticket.ticketStatus.status ==
+                                                    'Closed' ||
+                                                ticket.ticketStatus.status ==
+                                                    'Done'
+                                            "
+                                            :style="{
+                                                cursor:
+                                                    ticket.ticketStatus
+                                                        .status == 'Closed' ||
+                                                    ticket.ticketStatus
+                                                        .status == 'Done'
+                                                        ? 'not-allowed'
+                                                        : 'pointer',
+                                            }"
                                         />
                                         <router-link
                                             :to="{

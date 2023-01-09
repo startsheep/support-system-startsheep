@@ -10,4 +10,6 @@ interface TicketRepository extends Repository
     public function codeTicket();
 
     public function findByCriteria(array $criteria): ?Model;
+
+    public function getWhereIn(array $data);
 }

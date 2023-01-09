@@ -89,6 +89,13 @@ class TicketServiceImplement extends Service implements TicketService
         return $ticket->delete();
     }
 
+    public function multipleDestroy(array $deleted_data)
+    {
+        $tickets = $this->mainRepository->getWhereIn($deleted_data);
+
+        return $tickets->update(['ticket_status' => TicketStatus::CLOSED]);
+    }
+
     protected function multipleUpload($files, $ticket)
     {
         foreach ($files as $file) {

@@ -113,6 +113,10 @@ export default {
                         class="form-control"
                         v-if="ticket.ticketStatus"
                         v-model="ticket.ticketStatus.id"
+                        :disabled="
+                            ticket.ticketStatus.status == 'Closed' ||
+                            ticket.ticketStatus.status == 'Done'
+                        "
                     >
                         <option value="" disabled selected>
                             select status
@@ -127,7 +131,15 @@ export default {
                 </div>
                 <div class="mb-3">
                     <label class="fw-bolder">Assign to staff</label>
-                    <select class="form-control" v-model="ticket.staffId">
+                    <select
+                        class="form-control"
+                        v-model="ticket.staffId"
+                        v-if="ticket.ticketStatus"
+                        :disabled="
+                            ticket.ticketStatus.status == 'Closed' ||
+                            ticket.ticketStatus.status == 'Done'
+                        "
+                    >
                         <option value="" disabled selected>select staff</option>
                         <option
                             v-for="(staff, index) in staff"
