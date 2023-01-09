@@ -101,7 +101,7 @@ export default {
                         <div>
                             <router-link
                                 :to="{ name: 'Create Admin' }"
-                                class="btn btn-sm btn-primary mb-3"
+                                class="btn btn-primary mb-3"
                             >
                                 Create New Admin
                             </router-link>
@@ -127,7 +127,7 @@ export default {
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover border-top">
                             <thead>
                                 <tr>
                                     <th>Name</th>

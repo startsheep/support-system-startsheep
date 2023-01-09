@@ -24,25 +24,22 @@ class TicketServiceImplement extends Service implements TicketService
 
     public function create($attributes)
     {
-        $ticket = DB::transaction(function () use ($attributes) {
-            $attributes['code'] = $this->mainRepository->codeTicket();
+        $attributes['ticket_code'] = $this->mainRepository->codeTicket();
+        $attributes['ticket_status'] = Ticket::STATUS_OPEN;
 
-            $ticket = $this->mainRepository->create($attributes);
+        $ticket = $this->mainRepository->create($attributes);
 
-            if (isset($attributes['files']) && $attributes['files']) {
-                $this->multipleUpload($attributes['files'], $ticket);
-            }
-
-            return $ticket;
-        });
+        if (isset($attributes['files']) && $attributes['files']) {
+            $this->multipleUpload($attributes['files'], $ticket);
+        }
 
         return $ticket;
     }
 
     public function findOrFail($id)
     {
-        $ticket = parent::findOrFail($id);
-        $ticket->files;
+        $ticket = $this->mainRepository->findOrFail($id);
+        $ticket->load(['files', 'createdBy', 'staff', 'project', 'ticketStatus']);
 
         return $ticket;
     }

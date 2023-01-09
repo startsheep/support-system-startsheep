@@ -73,6 +73,11 @@ export default {
             this.deleteId = e;
             $("#deleteModal").modal("show");
         },
+        onSearch() {
+            setTimeout(() => {
+                this.getProjects();
+            }, 1000);
+        },
     },
     components: { Pagination, Loader, Delete },
 };
@@ -90,7 +95,7 @@ export default {
                         <div>
                             <router-link
                                 :to="{ name: 'Add More Project' }"
-                                class="btn btn-sm btn-primary mb-3"
+                                class="btn btn-primary mb-3"
                             >
                                 Add More Project
                             </router-link>
@@ -116,7 +121,7 @@ export default {
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover border-top">
                             <thead>
                                 <tr>
                                     <th>Project Name</th>

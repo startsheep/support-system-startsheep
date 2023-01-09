@@ -66,6 +66,7 @@ export default {
                                 id="name"
                                 class="form-control"
                                 v-model="admin.name"
+                                placeholder="enter admin name"
                             />
                             <Error :errors="errors.name" v-if="errors.name" />
                         </div>
@@ -76,22 +77,20 @@ export default {
                                 id="email"
                                 class="form-control"
                                 v-model="admin.email"
+                                placeholder="enter admin email"
                             />
                             <Error :errors="errors.email" v-if="errors.email" />
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-primary me-2"
-                        >
-                            Save
-                        </button>
+                    <div class="card-footer d-flex justify-content-between">
                         <router-link
-                            class="btn btn-sm btn-warning"
+                            class="btn btn-secondary"
                             :to="{ name: 'Admin' }"
                             >Cancel</router-link
                         >
+                        <button type="submit" class="btn btn-success">
+                            Update
+                        </button>
                     </div>
                 </div>
             </form>

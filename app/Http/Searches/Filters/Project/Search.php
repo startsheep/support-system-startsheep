@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Searches\Filters\Ticket;
+namespace App\Http\Searches\Filters\Project;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,11 +30,7 @@ class Search implements FilterContract
         }
 
         $query->where(function ($query) {
-            $query->where('ticket_title', 'like', '%' . $this->search . '%')
-                ->orWhere('ticket_code', 'like', '%' . $this->search . '%')
-                ->orWhereHas('project', function ($query) {
-                    $query->where('project_name', 'like', '%' . $this->search . '%');
-                });
+            $query->where('project_name', 'like', "%{$this->keyword()}%");
         });
 
         return $next($query);

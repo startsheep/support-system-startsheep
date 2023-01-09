@@ -1,35 +1,53 @@
 <template>
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar">
-            <a class="sidebar-brand" href="index.html">
+            <a class="sidebar-brand text-center">
+                <span class="material-symbols-outlined align-middle">
+                    support_agent </span
+                >&nbsp;
                 <span class="align-middle">SSS</span>
             </a>
 
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
                     <router-link class="sidebar-link" :to="{ name: 'Home' }">
-                        <i class="align-middle" data-feather="sliders"></i>
+                        <span
+                            class="material-symbols-outlined fs-3 align-middle"
+                            >home</span
+                        >&nbsp;
                         <span class="align-middle">Home</span>
                     </router-link>
                 </li>
 
                 <li class="sidebar-item">
                     <router-link class="sidebar-link" :to="{ name: 'Ticket' }">
-                        <i class="align-middle" data-feather="ticket"></i>
+                        <span
+                            class="material-symbols-outlined fs-3 align-middle"
+                        >
+                            confirmation_number </span
+                        >&nbsp;
                         <span class="align-middle">Ticket</span>
                     </router-link>
                 </li>
 
                 <li class="sidebar-item">
                     <router-link class="sidebar-link" :to="{ name: 'Project' }">
-                        <i class="align-middle" data-feather="package"></i>
+                        <span
+                            class="material-symbols-outlined fs-3 align-middle"
+                        >
+                            inventory_2 </span
+                        >&nbsp;
                         <span class="align-middle">Project</span>
                     </router-link>
                 </li>
 
                 <li class="sidebar-item">
                     <router-link class="sidebar-link" :to="{ name: 'Admin' }">
-                        <i class="align-middle" data-feather="user"></i>
+                        <span
+                            class="material-symbols-outlined fs-3 align-middle"
+                        >
+                            group </span
+                        >&nbsp;
                         <span class="align-middle">User</span>
                     </router-link>
                 </li>

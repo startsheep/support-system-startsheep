@@ -27,12 +27,10 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         $request = [
-            'title' => 'required',
-            'company' => 'required',
-            'project' => 'required',
-            'domain' => 'required',
+            'project_id' => 'required|integer|exists:projects,id',
+            'ticket_title' => 'required',
+            'ticket_priority' => 'required',
             'description' => 'required',
-            'created_by' => 'required',
         ];
 
         if (request('files')) {
@@ -42,31 +40,18 @@ class CreateRequest extends FormRequest
         return $request;
     }
 
-    // public function attributes()
-    // {
-    //     return [
-    //         'title' => 'judul',
-    //         'project' => 'projek',
-    //         'domain' => 'alamat website',
-    //         'description' => 'deskripsi',
-    //         'created_by' => 'pengadu',
-    //     ];
-    // }
+    public function attributes()
+    {
+        return [
+            'project_id' => 'project',
+        ];
+    }
 
-    /**
-     * Fill the model with an array of attributes.
-     *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     protected function failedValidation(Validator $validator)
     {
         $response = new JsonResponse([
-            'meta' => [
-                'messages' => $validator->errors(),
-                'status_code' => 400,
-            ],
+            'messages' => $validator->errors(),
+            'status_code' => 400,
         ], 400);
 
         throw new ValidationException($validator, $response);

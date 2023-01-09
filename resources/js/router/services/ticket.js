@@ -8,6 +8,14 @@ export default [
         },
     },
     {
+        path: "/ticket/create",
+        component: () => import("../../pages/ticket/Create.vue"),
+        name: "Create Ticket",
+        meta: {
+            middleware: "auth",
+        },
+    },
+    {
         path: "/ticket/:id/detail",
         component: () => import("../../pages/ticket/Show.vue"),
         name: "Ticket Detail",

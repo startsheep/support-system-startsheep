@@ -3,6 +3,7 @@
 namespace App\Http\Searches;
 
 use App\Http\Searches\Filters\Ticket\Search;
+use App\Http\Searches\Filters\Ticket\Sort;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,13 +12,14 @@ class TicketSearch extends HttpSearch
 
     protected function passable()
     {
-        return Ticket::with('files');
+        return Ticket::with(['files', 'createdBy', 'project', 'staff', 'ticketStatus']);
     }
 
     protected function filters(): array
     {
         return [
-            Search::class
+            Search::class,
+            Sort::class
         ];
     }
 

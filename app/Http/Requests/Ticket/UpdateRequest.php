@@ -27,12 +27,11 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         $request = [
-            'title' => 'required',
-            'company' => 'required',
-            'project' => 'required',
-            'domain' => 'required',
+            'project_id' => 'required|integer|exists:projects,id',
+            'ticket_title' => 'required',
+            'ticket_priority' => 'required',
+            'ticket_status' => 'required',
             'description' => 'required',
-            'created_by' => 'required',
         ];
 
         if (request('files')) {
@@ -42,13 +41,13 @@ class UpdateRequest extends FormRequest
         return $request;
     }
 
-    /**
-     * Fill the model with an array of attributes.
-     *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+    public function attributes()
+    {
+        return [
+            'project_id' => 'project',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         $response = new JsonResponse([

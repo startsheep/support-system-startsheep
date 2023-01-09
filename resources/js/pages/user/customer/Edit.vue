@@ -87,6 +87,7 @@ export default {
                                 id="name"
                                 class="form-control"
                                 v-model="customer.name"
+                                placeholder="enter customer name"
                             />
                             <Error :errors="errors.name" v-if="errors.name" />
                         </div>
@@ -97,6 +98,7 @@ export default {
                                 id="email"
                                 class="form-control"
                                 v-model="customer.email"
+                                placeholder="enter customer email"
                             />
                             <Error :errors="errors.email" v-if="errors.email" />
                         </div>
@@ -107,7 +109,9 @@ export default {
                                 id="projectId"
                                 class="form-control"
                             >
-                                <option value="" disabled></option>
+                                <option value="" disabled selected>
+                                    select project
+                                </option>
                                 <option
                                     :value="project.id"
                                     v-for="(project, index) in projects"
@@ -121,18 +125,15 @@ export default {
                             />
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-primary me-2"
-                        >
-                            Save
-                        </button>
+                    <div class="card-footer d-flex justify-content-between">
                         <router-link
-                            class="btn btn-sm btn-warning"
+                            class="btn btn-secondary"
                             :to="{ name: 'Customer' }"
                             >Cancel</router-link
                         >
+                        <button type="submit" class="btn btn-success">
+                            Update
+                        </button>
                     </div>
                 </div>
             </form>

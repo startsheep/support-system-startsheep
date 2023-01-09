@@ -1,22 +1,27 @@
 <script>
-import Loader from '../../components/Loader.vue';
+import Loader from "../../components/Loader.vue";
+import Properties from "./components/Properties.vue";
+import moment from "moment";
+import General from "./components/General.vue";
+import Comment from "./components/Comment.vue";
 
 export default {
-    props: ['id'],
+    props: ["id"],
     data() {
         return {
             ticket: {},
-            isLoading: false
-        }
+
+            isLoading: false,
+        };
     },
     mounted() {
-        this.getTicket()
+        this.getTicket();
     },
     methods: {
         getTicket() {
             this.isLoading = true;
             this.$store
-                .dispatch("showData", ["ticket/" + this.id])
+                .dispatch("showData", ["ticket", this.id])
                 .then((response) => {
                     this.isLoading = false;
                     this.ticket = response.data;
@@ -25,35 +30,83 @@ export default {
                     this.isLoading = false;
                     console.log(error);
                 });
-        }
+        },
+        onUpdate() {
+            this.getTicket();
+        },
+        dateTime(value, format) {
+            return moment(value).format(format ?? "YYYY-MM-DD HH:mm");
+        },
     },
-    components: { Loader }
-}
+    components: { Loader, Properties, General, Comment },
+};
 </script>
+
 <template>
-    <div class="container mt-5 position-relative">
-        <Loader v-if="isLoading" />
-        <div class="card mb-3">
-            <div class="card-header d-flex">
-                <img :src="`https://ui-avatars.com/api/?background=random&size=25&rounded=true&length=2&name=${ticket.createdBy}`">
-                <div class="card-header-sub ms-3">
-                    <span><b>{{ ticket.createdBy }}</b></span>
-                    <br>
-                    <span>Request on {{ ticket.createdAt }}</span>
+    <h1 class="h3 mb-3">{{ this.$route.name + " " + ticket.ticketCode }}</h1>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <Loader v-if="isLoading" />
+                <div class="card-header d-flex">
+                    <img
+                        v-if="ticket.createdBy"
+                        :src="`https://ui-avatars.com/api/?background=random&size=30&rounded=true&length=2&name=${ticket.createdBy.name}`"
+                    />
+                    <div class="card-header-sub ms-3">
+                        <span
+                            ><b
+                                v-if="ticket.createdBy"
+                                v-html="ticket.createdBy.name"
+                            ></b
+                        ></span>
+                        <br />
+                        <span
+                            >Request on
+                            {{
+                                dateTime(
+                                    ticket.createdAt,
+                                    "HH:mm, DD MMMM YYYY"
+                                )
+                            }}</span
+                        >
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h3>
+                        {{ ticket.ticketTitle }}
+                    </h3>
+                    <br />
+                    <p>Description :</p>
+                    <p>
+                        {{ ticket.description }}
+                    </p>
+                    <div v-if="ticket.files && ticket.files.length > 0">
+                        <span><b>Attachments</b> :</span>
+                        <div class="row mt-2">
+                            <div
+                                v-for="(file, index) in ticket.files"
+                                :key="index"
+                                class="col-lg-3"
+                            >
+                                <a :href="file.filePath" target="_blank">
+                                    <img
+                                        :src="file.filePath"
+                                        class="img-fluid"
+                                        width="250"
+                                    />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <h3>{{ ticket.title }}</h3>
-                <p>description :</p>
-                <p>
-                    {{ ticket.description }}
-                </p>
-            </div>
+            <Comment />
         </div>
-        <div class="card">
-            <div class="card-body">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad totam eaque, iusto asperiores, officia aspernatur magni odit dolore magnam incidunt non assumenda quibusdam provident, voluptatibus id repellendus eveniet vero tempora?
-            </div>
+        <div class="col-lg-4">
+            <General :ticket="ticket" :isLoading="isLoading" />
+            <Properties :ticket="ticket" @updateTicket="onUpdate" />
         </div>
     </div>
 </template>

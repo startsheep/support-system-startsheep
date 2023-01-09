@@ -43,13 +43,6 @@ export default {
             <form method="post" @submit.prevent="handleSubmit">
                 <div class="card">
                     <Loader v-if="isLoading" />
-                    <div class="card-header">
-                        <router-link
-                            class="btn btn-sm btn-primary"
-                            :to="{ name: 'Admin' }"
-                            >Back</router-link
-                        >
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="name">Name</label>
@@ -58,6 +51,7 @@ export default {
                                 id="name"
                                 class="form-control"
                                 v-model="form.name"
+                                placeholder="enter admin name"
                             />
                             <Error :errors="errors.name" v-if="errors.name" />
                         </div>
@@ -68,19 +62,19 @@ export default {
                                 id="email"
                                 class="form-control"
                                 v-model="form.email"
+                                placeholder="enter admin email"
                             />
                             <Error :errors="errors.email" v-if="errors.email" />
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-primary me-2"
+                    <div class="card-footer d-flex justify-content-between">
+                        <router-link
+                            class="btn btn-secondary"
+                            :to="{ name: 'Admin' }"
+                            >Back</router-link
                         >
-                            Add
-                        </button>
-                        <button type="reset" class="btn btn-sm btn-warning">
-                            Reset
+                        <button type="submit" class="btn btn-success">
+                            Submit
                         </button>
                     </div>
                 </div>

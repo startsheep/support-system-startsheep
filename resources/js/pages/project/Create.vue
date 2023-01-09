@@ -41,13 +41,6 @@ export default {
             <form method="post" @submit.prevent="handleSubmit">
                 <div class="card">
                     <Loader v-if="isLoading" />
-                    <div class="card-header">
-                        <router-link
-                            class="btn btn-sm btn-primary"
-                            :to="{ name: 'Project' }"
-                            >Back</router-link
-                        >
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="projectName">Project Name</label>
@@ -56,6 +49,7 @@ export default {
                                 id="projectName"
                                 class="form-control"
                                 v-model="form.projectName"
+                                placeholder="eg. Rumah Tahfidz Quran (RTQ)"
                             />
                             <Error
                                 :errors="errors.projectName"
@@ -69,7 +63,7 @@ export default {
                                 id="projectDomain"
                                 class="form-control"
                                 v-model="form.projectDomain"
-                                placeholder="http://localhost.test"
+                                placeholder="eg. http://localhost.test"
                             />
                             <Error
                                 :errors="errors.projectDomain"
@@ -77,15 +71,14 @@ export default {
                             />
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-primary me-2"
+                    <div class="card-footer d-flex justify-content-between">
+                        <router-link
+                            class="btn btn-sm btn-secondary"
+                            :to="{ name: 'Project' }"
+                            >Cancel</router-link
                         >
-                            Add
-                        </button>
-                        <button type="reset" class="btn btn-sm btn-warning">
-                            Reset
+                        <button type="submit" class="btn btn-sm btn-success">
+                            Submit
                         </button>
                     </div>
                 </div>

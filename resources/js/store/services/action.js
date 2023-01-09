@@ -42,10 +42,10 @@ const process = {
                 );
             });
         },
-        postDataUpload(context, param, url) {
+        postDataUpload(context, param) {
             return new Promise((resolve, reject) => {
                 Api.init();
-                Api.postFormData(url, param).then(
+                Api.postFormData(param[0], param[1]).then(
                     (response) => {
                         resolve(response.data);
                     },

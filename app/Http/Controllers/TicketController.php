@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\DB;
 
 class TicketController extends Controller
 {
-    use MessageFixer;
-
     protected $ticketService;
 
     public function __construct(TicketService $ticketService)
@@ -23,11 +21,6 @@ class TicketController extends Controller
         $this->ticketService = $ticketService;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $factory = app()->make(TicketSearch::class);
@@ -36,32 +29,13 @@ class TicketController extends Controller
         return new TicketCollection($tickets);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(CreateRequest $request)
     {
-        DB::beginTransaction();
-
-        try {
-            DB::commit();
-            $result = $this->ticketService->create($request->all());
-            return $this->createSuccess('ticket', $result);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return $this->error($th->getMessage());
-        }
+        return DB::transaction(function () use ($request) {
+            return $this->ticketService->create($request->all());
+        });
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $ticket = $this->ticketService->findOrFail($id);
@@ -69,57 +43,17 @@ class TicketController extends Controller
         return new TicketDetail($ticket);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  string  $code
-     * @return \Illuminate\Http\Response
-     */
-    public function showByCode($code)
-    {
-        $ticket = $this->ticketService->find($code);
-
-        return new TicketDetail($ticket);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateRequest $request, $id)
     {
-        DB::beginTransaction();
-
-        try {
-            DB::commit();
-            $result = $this->ticketService->update($id, $request->all());
-            return $this->updateSuccess('ticket', $result);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return $this->error($th->getMessage());
-        }
+        return DB::transaction(function () use ($request, $id) {
+            return $this->ticketService->update($id, $request->all());
+        });
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        DB::beginTransaction();
-
-        try {
-            DB::commit();
-            $result = $this->ticketService->delete($id);
-            return $this->deleteSuccess('ticket', $result);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return $this->error($th->getMessage());
-        }
+        return DB::transaction(function () use ($id) {
+            return $this->ticketService->delete($id);
+        });
     }
 }
