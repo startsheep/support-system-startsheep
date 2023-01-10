@@ -65,7 +65,7 @@ export default {
                         >
                         <p v-html="project.projectDomain"></p>
                     </div>
-                    <div>
+                    <div v-if="$can('edit', 'Project')">
                         <router-link
                             :to="{ name: 'Edit Project', params: { id: id } }"
                             class="btn btn-warning form-control"

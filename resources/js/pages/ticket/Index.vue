@@ -74,17 +74,24 @@ export default {
                             <router-link
                                 :to="{ name: 'Create Ticket' }"
                                 class="btn btn-primary me-3"
+                                v-if="$can('create', 'Ticket')"
                             >
                                 Create New Ticket
                             </router-link>
                             <span v-show="selectedCheckbox.length > 0">
-                                <button class="btn btn-primary me-3">
+                                <button
+                                    class="btn btn-primary me-3"
+                                    v-if="$can('assignTo', 'Ticket')"
+                                >
                                     Assign To
                                 </button>
                                 <button class="btn btn-primary me-3">
                                     Resolve
                                 </button>
-                                <button class="btn btn-primary me-3">
+                                <button
+                                    class="btn btn-primary me-3"
+                                    v-if="$can('delete', 'Ticket')"
+                                >
                                     Delete
                                 </button>
                             </span>

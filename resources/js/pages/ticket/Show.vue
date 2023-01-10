@@ -105,8 +105,16 @@ export default {
             <Comment />
         </div>
         <div class="col-lg-4">
-            <General :ticket="ticket" :isLoading="isLoading" />
-            <Properties :ticket="ticket" @updateTicket="onUpdate" />
+            <General
+                :ticket="ticket"
+                :isLoading="isLoading"
+                v-if="$can('general', 'Ticket')"
+            />
+            <Properties
+                :ticket="ticket"
+                @updateTicket="onUpdate"
+                v-if="$can('properties', 'Ticket')"
+            />
         </div>
     </div>
 </template>

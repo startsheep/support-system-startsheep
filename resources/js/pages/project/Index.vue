@@ -96,6 +96,7 @@ export default {
                             <router-link
                                 :to="{ name: 'Add More Project' }"
                                 class="btn btn-primary mb-3"
+                                v-if="$can('create', 'Project')"
                             >
                                 Add More Project
                             </router-link>
@@ -128,7 +129,9 @@ export default {
                                     <th>Project Domain</th>
                                     <th>Ticket</th>
                                     <th>Customer PIC</th>
-                                    <th>Action</th>
+                                    <th v-if="$can('delete', 'Project')">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -159,7 +162,7 @@ export default {
                                     </td>
                                     <td v-html="project.countTicket"></td>
                                     <td v-html="project.countCustomer"></td>
-                                    <td>
+                                    <td v-if="$can('delete', 'Project')">
                                         <button
                                             class="btn btn-sm btn-danger"
                                             @click="onDelete(project.id)"

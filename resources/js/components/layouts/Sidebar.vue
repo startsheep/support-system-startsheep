@@ -9,7 +9,7 @@
             </a>
 
             <ul class="sidebar-nav">
-                <li class="sidebar-item">
+                <li class="sidebar-item" v-if="$can('index', 'Home')">
                     <router-link class="sidebar-link" :to="{ name: 'Home' }">
                         <span
                             class="material-symbols-outlined fs-3 align-middle"
@@ -19,7 +19,7 @@
                     </router-link>
                 </li>
 
-                <li class="sidebar-item">
+                <li class="sidebar-item" v-if="$can('index', 'Ticket')">
                     <router-link class="sidebar-link" :to="{ name: 'Ticket' }">
                         <span
                             class="material-symbols-outlined fs-3 align-middle"
@@ -30,7 +30,7 @@
                     </router-link>
                 </li>
 
-                <li class="sidebar-item">
+                <li class="sidebar-item" v-if="$can('index', 'Project')">
                     <router-link class="sidebar-link" :to="{ name: 'Project' }">
                         <span
                             class="material-symbols-outlined fs-3 align-middle"
@@ -41,7 +41,7 @@
                     </router-link>
                 </li>
 
-                <li class="sidebar-item">
+                <li class="sidebar-item" v-if="$can('index', 'Admin')">
                     <router-link class="sidebar-link" :to="{ name: 'Admin' }">
                         <span
                             class="material-symbols-outlined fs-3 align-middle"

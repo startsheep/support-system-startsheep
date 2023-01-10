@@ -129,7 +129,7 @@ export default {
                         ></option>
                     </select>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" v-if="$can('assignTo', 'Ticket')">
                     <label class="fw-bolder">Assign to staff</label>
                     <select
                         class="form-control"
