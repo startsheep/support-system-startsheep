@@ -1,14 +1,20 @@
 <script>
 import Loader from "../../components/Loader.vue";
 import Pagination from "../../components/Pagination.vue";
+import Delete from "../../components/notifications/Detele.vue";
+import Resolve from "../../components/notifications/Resolve.vue";
+import Multiselect from "vue-multiselect";
 
 export default {
     data() {
         return {
             search: "",
             isLoading: false,
+            isLoadingStaff: false,
+            assignTo: null,
 
-            selectedCheckbox: [],
+            staffs: [],
+            ticketSelected: [],
             tickets: [],
             metaPagination: [],
             pagination: {
@@ -19,8 +25,23 @@ export default {
     },
     mounted() {
         this.getTickets();
+        this.getStaffs();
     },
     methods: {
+        getStaffs(search = "") {
+            this.isLoadingStaff = true;
+            const params = [`search=${search}`].join("&");
+            this.$store
+                .dispatch("getData", ["user/staff", params])
+                .then((response) => {
+                    this.isLoadingStaff = false;
+                    this.staffs = response.data;
+                })
+                .catch((error) => {
+                    this.isLoadingStaff = false;
+                    console.log(error);
+                });
+        },
         getTickets() {
             this.isLoading = true;
             const params = [
@@ -40,10 +61,105 @@ export default {
                     console.log(error);
                 });
         },
+        resolveTickets() {
+            $("#resolveModal").modal("hide");
+            let resolvedData = [];
+
+            this.ticketSelected.forEach((ticket, index) => {
+                resolvedData[index] = ticket;
+            });
+
+            const data = {
+                resolved_data: resolvedData,
+            };
+
+            this.isLoading = true;
+            this.$store
+                .dispatch("putData", ["ticket/resolve", data])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getTickets();
+                    this.ticketSelected = [];
+                    this.$toast.success("data has been resolved");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    console.log(error);
+                });
+        },
+        deleteTickets() {
+            $("#deleteModal").modal("hide");
+            let deletedData = [];
+
+            this.ticketSelected.forEach((ticket, index) => {
+                deletedData[index] = ticket;
+            });
+
+            const data = {
+                deleted_data: deletedData,
+            };
+
+            this.isLoading = true;
+            this.$store
+                .dispatch("deleteMultipleData", [
+                    "ticket/multiple-delete",
+                    data,
+                ])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getTickets();
+                    this.ticketSelected = [];
+                    this.$toast.success("data has been deleted");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    console.log(error);
+                });
+        },
+        assignTickets() {
+            $("#assignTo").modal("hide");
+            let assignedData = [];
+
+            this.ticketSelected.forEach((ticket, index) => {
+                assignedData[index] = ticket;
+            });
+
+            const data = {
+                assigned_data: assignedData,
+                staff_id: this.assignTo.id,
+            };
+
+            this.isLoading = true;
+            this.$store
+                .dispatch("putData", ["ticket/assign", data])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getTickets();
+                    this.ticketSelected = [];
+                    this.assignTo = null;
+                    this.$toast.success("data has been assigned");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    console.log(error);
+                });
+        },
         onSearch() {
             setTimeout(() => {
                 this.getTickets();
             }, 1000);
+        },
+        onDelete() {
+            $("#deleteModal").modal("show");
+        },
+        onResolve() {
+            $("#resolveModal").modal("show");
+        },
+        onAssign() {
+            $("#assignTo").modal("show");
+        },
+        customLabel(option) {
+            return `${option.name}`;
         },
         alertTicketPriority(priority) {
             if (priority == "Minor") {
@@ -57,7 +173,7 @@ export default {
             }
         },
     },
-    components: { Pagination, Loader },
+    components: { Pagination, Loader, Delete, Resolve, Multiselect },
 };
 </script>
 
@@ -78,19 +194,24 @@ export default {
                             >
                                 Create New Ticket
                             </router-link>
-                            <span v-show="selectedCheckbox.length > 0">
+                            <span v-show="ticketSelected.length > 0">
                                 <button
                                     class="btn btn-primary me-3"
                                     v-if="$can('assignTo', 'Ticket')"
+                                    @click="onAssign"
                                 >
                                     Assign To
                                 </button>
-                                <button class="btn btn-primary me-3">
+                                <button
+                                    class="btn btn-primary me-3"
+                                    @click="onResolve"
+                                >
                                     Resolve
                                 </button>
                                 <button
                                     class="btn btn-primary me-3"
                                     v-if="$can('delete', 'Ticket')"
+                                    @click="onDelete"
                                 >
                                     Delete
                                 </button>
@@ -137,25 +258,9 @@ export default {
                                         <input
                                             type="checkbox"
                                             class="me-2"
-                                            v-model="selectedCheckbox"
+                                            v-model="ticketSelected"
                                             :value="ticket.id"
                                             style="cursor: pointer"
-                                            v-if="ticket.ticketStatus"
-                                            :disabled="
-                                                ticket.ticketStatus.status ==
-                                                    'Closed' ||
-                                                ticket.ticketStatus.status ==
-                                                    'Done'
-                                            "
-                                            :style="{
-                                                cursor:
-                                                    ticket.ticketStatus
-                                                        .status == 'Closed' ||
-                                                    ticket.ticketStatus
-                                                        .status == 'Done'
-                                                        ? 'not-allowed'
-                                                        : 'pointer',
-                                            }"
                                         />
                                         <router-link
                                             :to="{
@@ -205,6 +310,67 @@ export default {
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <Delete @onDelete="deleteTickets" />
+    <Resolve @onConfirm="resolveTickets" />
+    <div
+        class="modal fade"
+        id="assignTo"
+        tabindex="-1"
+        aria-labelledby="assignToLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="assignToLabel">
+                        Assign to staff
+                    </h1>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <label for="search">Search:</label>
+                        <Multiselect
+                            :searchable="true"
+                            :internal-search="false"
+                            @search-change="getStaffs"
+                            v-model="assignTo"
+                            :options="staffs"
+                            :custom-label="customLabel"
+                            placeholder="select staff"
+                            track-by="id"
+                            :loading="isLoadingStaff"
+                        >
+                        </Multiselect>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-success"
+                            @click="assignTickets"
+                        >
+                            Confirm
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

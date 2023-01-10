@@ -58,6 +58,11 @@ const Api = {
     delete(resource) {
         return axios.delete(resource);
     },
+    deleteWithParams(resource, params) {
+        return axios.delete(resource, {
+            params: params,
+        });
+    },
     update(resource, slug, params) {
         return axios.put(
             `${resource}/${slug}`,

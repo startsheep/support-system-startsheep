@@ -133,7 +133,7 @@ export default {
                                 <label for="projectId">Project</label>
                                 <select
                                     id="projectId"
-                                    class="form-control"
+                                    class="form-select"
                                     v-model="form.projectId"
                                 >
                                     <option value="" disabled selected>
@@ -155,7 +155,7 @@ export default {
                                 <label for="ticketPriority">Priority</label>
                                 <select
                                     id="ticketPriority"
-                                    class="form-control"
+                                    class="form-select"
                                     v-model="form.ticketPriority"
                                 >
                                     <option value="" disabled selected>

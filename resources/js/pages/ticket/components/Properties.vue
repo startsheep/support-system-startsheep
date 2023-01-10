@@ -92,10 +92,7 @@ export default {
                 <h5 class="card-title mb-3">Properties</h5>
                 <div class="mb-3">
                     <label class="fw-bolder">Priority</label>
-                    <select
-                        class="form-control"
-                        v-model="ticket.ticketPriority"
-                    >
+                    <select class="form-select" v-model="ticket.ticketPriority">
                         <option value="" disabled selected>
                             select priority
                         </option>
@@ -110,7 +107,7 @@ export default {
                 <div class="mb-3">
                     <label class="fw-bolder">Status</label>
                     <select
-                        class="form-control"
+                        class="form-select"
                         v-if="ticket.ticketStatus"
                         v-model="ticket.ticketStatus.id"
                         :disabled="
@@ -132,7 +129,7 @@ export default {
                 <div class="mb-3" v-if="$can('assignTo', 'Ticket')">
                     <label class="fw-bolder">Assign to staff</label>
                     <select
-                        class="form-control"
+                        class="form-select"
                         v-model="ticket.staffId"
                         v-if="ticket.ticketStatus"
                         :disabled="

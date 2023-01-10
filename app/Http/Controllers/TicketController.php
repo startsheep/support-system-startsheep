@@ -50,6 +50,20 @@ class TicketController extends Controller
         });
     }
 
+    public function assignTo(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            return $this->ticketService->assignTo($request->all());
+        });
+    }
+
+    public function resolve(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            return $this->ticketService->resolve($request->resolved_data);
+        });
+    }
+
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {
@@ -60,7 +74,7 @@ class TicketController extends Controller
     public function multipleDestroy(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            return $this->ticketService->multipleDestroy($request->deleted_data);
+            return $this->ticketService->destroy($request->deleted_data);
         });
     }
 }

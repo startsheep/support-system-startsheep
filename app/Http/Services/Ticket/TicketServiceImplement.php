@@ -96,6 +96,20 @@ class TicketServiceImplement extends Service implements TicketService
         return $tickets->update(['ticket_status' => TicketStatus::CLOSED]);
     }
 
+    public function resolve(array $data)
+    {
+        $tickets = $this->mainRepository->getWhereIn($data);
+
+        return $tickets->update(['ticket_status' => TicketStatus::DONE]);
+    }
+
+    public function assignTo(array $data)
+    {
+        $tickets = $this->mainRepository->getWhereIn($data['assigned_data']);
+
+        return $tickets->update(['staff_id' => $data['staff_id']]);
+    }
+
     protected function multipleUpload($files, $ticket)
     {
         foreach ($files as $file) {

@@ -28,11 +28,11 @@ class RoleSeeder extends Seeder
         $access[1]['Staff'] = ['index', 'create', 'edit', 'delete'];
         $access[1]['Customer'] = ['index', 'create', 'edit', 'delete'];
         $access[1]['Project'] = ['index', 'create', 'edit', 'delete', 'show'];
-        $access[1]['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo'];
+        $access[1]['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo', 'resolve'];
 
         $access[2]['Home'] = ['index'];
         $access[2]['Project'] = ['index', 'show'];
-        $access[2]['Ticket'] = ['index', 'show', 'properties', 'general'];
+        $access[2]['Ticket'] = ['index', 'show', 'properties', 'general', 'resolve'];
 
         $access[3]['Home'] = ['index'];
         $access[3]['Project'] = ['index', 'create', 'edit', 'delete', 'show'];
@@ -47,7 +47,7 @@ class RoleSeeder extends Seeder
         $permission['Staff'] = ['index', 'create', 'edit', 'delete'];
         $permission['Customer'] = ['index', 'create', 'edit', 'delete'];
         $permission['Project'] = ['index', 'create', 'edit', 'delete', 'show'];
-        $permission['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo'];
+        $permission['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo', 'resolve'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {
