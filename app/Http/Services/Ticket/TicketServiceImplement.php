@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Ticket;
 
-use App\Events\TicketMessage;
 use LaravelEasyRepository\Service;
 use App\Http\Repositories\Ticket\TicketRepository;
 use App\Models\TicketStatus;
@@ -33,8 +32,6 @@ class TicketServiceImplement extends Service implements TicketService
         if (isset($attributes['files']) && $attributes['files']) {
             $this->multipleUpload($attributes['files'], $ticket);
         }
-
-        TicketMessage::dispatch("Ticket Created");
 
         return $ticket;
     }
@@ -75,8 +72,6 @@ class TicketServiceImplement extends Service implements TicketService
             return $ticket->update($attributes);
         });
 
-        TicketMessage::dispatch("Ticket Updated");
-
         return $ticket;
     }
 
@@ -91,29 +86,27 @@ class TicketServiceImplement extends Service implements TicketService
             $ticket->files()->delete();
         }
 
-        TicketMessage::dispatch("Ticket Deleted");
-
         return $ticket->delete();
     }
 
     public function multipleDestroy(array $deleted_data)
     {
         $tickets = $this->mainRepository->getWhereIn($deleted_data);
-        TicketMessage::dispatch("Multiple Ticket Deleted");
+
         return $tickets->update(['ticket_status' => TicketStatus::CLOSED]);
     }
 
     public function resolve(array $data)
     {
         $tickets = $this->mainRepository->getWhereIn($data);
-        TicketMessage::dispatch("Ticket Resolved");
+
         return $tickets->update(['ticket_status' => TicketStatus::DONE]);
     }
 
     public function assignTo(array $data)
     {
         $tickets = $this->mainRepository->getWhereIn($data['assigned_data']);
-        TicketMessage::dispatch("Ticket Assigned");
+
         return $tickets->update(['staff_id' => $data['staff_id']]);
     }
 

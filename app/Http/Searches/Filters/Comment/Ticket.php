@@ -29,7 +29,7 @@ class Ticket implements FilterContract
             return $next($query);
         }
 
-        $query->where('ticket_id', 'LIKE', '%' . $this->ticket . '%');
+        $query->where('ticket_id', $this->ticket);
 
         return $next($query);
     }

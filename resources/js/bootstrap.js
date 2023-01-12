@@ -28,4 +28,21 @@ window.Echo = new Echo({
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? "https") === "https",
+    authorizer: (channel) => {
+        return {
+            authorize: (socketId, callback) => {
+                axios
+                    .post("/broadcasting/auth", {
+                        socket_id: socketId,
+                        channel_name: channel.name,
+                    })
+                    .then((response) => {
+                        callback(false, response.data);
+                    })
+                    .catch((error) => {
+                        callback(true, error);
+                    });
+            },
+        };
+    },
 });

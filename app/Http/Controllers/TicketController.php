@@ -33,6 +33,7 @@ class TicketController extends Controller
     public function store(CreateRequest $request)
     {
         return DB::transaction(function () use ($request) {
+            TicketMessage::dispatch("Ticket Created");
             return $this->ticketService->create($request->all());
         });
     }
@@ -47,6 +48,7 @@ class TicketController extends Controller
     public function update(UpdateRequest $request, $id)
     {
         return DB::transaction(function () use ($request, $id) {
+            TicketMessage::dispatch("Ticket Updated");
             return $this->ticketService->update($id, $request->all());
         });
     }
@@ -54,6 +56,7 @@ class TicketController extends Controller
     public function assignTo(Request $request)
     {
         return DB::transaction(function () use ($request) {
+            TicketMessage::dispatch("Ticket Assigned");
             return $this->ticketService->assignTo($request->all());
         });
     }
@@ -61,6 +64,7 @@ class TicketController extends Controller
     public function resolve(Request $request)
     {
         return DB::transaction(function () use ($request) {
+            TicketMessage::dispatch("Ticket Resolved");
             return $this->ticketService->resolve($request->resolved_data);
         });
     }
@@ -68,6 +72,7 @@ class TicketController extends Controller
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {
+            TicketMessage::dispatch("Ticket Deleted");
             return $this->ticketService->delete($id);
         });
     }

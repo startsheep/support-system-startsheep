@@ -97,7 +97,7 @@ export default {
                     <router-link
                         :to="'/'"
                         class="btn btn-primary me-2"
-                        v-if="user.roles[0].name != 'Admin'"
+                        v-if="user.roles && user.roles[0].name != 'Admin'"
                         >Create New Ticket</router-link
                     >
                 </div>

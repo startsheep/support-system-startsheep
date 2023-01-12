@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentMessage;
 use App\Http\Requests\Comment\CommentRequest;
 use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Comment\CommentDetail;
@@ -30,6 +31,7 @@ class CommentController extends Controller
     public function store(CommentRequest $request)
     {
         return DB::transaction(function () use ($request) {
+            CommentMessage::dispatch("Comment Created", $request->ticket_id);
             return $this->commentService->create($request->all());
         });
     }
@@ -45,6 +47,7 @@ class CommentController extends Controller
     public function update(CommentRequest $request, $id)
     {
         return DB::transaction(function () use ($request, $id) {
+            CommentMessage::dispatch("Comment Updated", $request->ticket_id);
             return $this->commentService->update($id, $request->all());
         });
     }
@@ -52,6 +55,8 @@ class CommentController extends Controller
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {
+            $comment = $this->commentService->findOrFail($id);
+            CommentMessage::dispatch("Comment Deleted", $comment->ticket_id);
             return $this->commentService->delete($id);
         });
     }

@@ -4,6 +4,7 @@ import Properties from "./components/Properties.vue";
 import moment from "moment";
 import General from "./components/General.vue";
 import Comment from "./components/Comment.vue";
+import PusherUtil from "../../store/utils/pusher";
 
 export default {
     props: ["id"],
@@ -16,6 +17,10 @@ export default {
     },
     mounted() {
         this.getTicket();
+
+        PusherUtil.getMessage("tickets", "TicketMessage", (response) => {
+            this.getTicket();
+        });
     },
     methods: {
         getTicket() {

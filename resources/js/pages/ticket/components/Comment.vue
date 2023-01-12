@@ -1,6 +1,7 @@
 <script>
 import Loader from "../../../components/Loader.vue";
 import moment from "moment";
+import PusherUtil from "../../../store/utils/pusher";
 
 export default {
     data() {
@@ -30,6 +31,15 @@ export default {
     mounted() {
         this.getComments();
         this.getUser();
+
+        PusherUtil.privateMessage(
+            "comments." + this.$route.params.id,
+            "CommentMessage",
+            (response) => {
+                console.log(response);
+                this.getComments();
+            }
+        );
     },
     computed: {
         createData() {
@@ -64,7 +74,6 @@ export default {
     },
     methods: {
         getComments() {
-            this.isLoadingComment = true;
             const params = [
                 `ticket=${this.$route.params.id}`,
                 `per_page=${this.pagination.perPage}`,
@@ -73,7 +82,6 @@ export default {
             this.$store
                 .dispatch("getData", [`comment`, params])
                 .then((response) => {
-                    this.isLoadingComment = false;
                     this.comments = response.data;
                 })
                 .catch((error) => {
@@ -200,7 +208,6 @@ export default {
         :key="index"
         v-if="isShow"
     >
-        <Loader v-if="isLoadingComment" />
         <div class="card-header d-flex justify-content-between">
             <div class="d-flex">
                 <img
