@@ -37,7 +37,7 @@ class CommentController extends Controller
     public function show($id)
     {
         $comment = $this->commentService->findOrFail($id);
-        $comment->load(['ticket', 'user']);
+        $comment->load(['ticket', 'user.roles', 'files']);
 
         return new CommentDetail($comment);
     }

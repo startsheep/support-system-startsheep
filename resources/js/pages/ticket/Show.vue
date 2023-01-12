@@ -88,13 +88,12 @@ export default {
                             <div
                                 v-for="(file, index) in ticket.files"
                                 :key="index"
-                                class="col-lg-3"
+                                class="col-lg-3 col-md-4 col-sm-6 col-12"
                             >
                                 <a :href="file.filePath" target="_blank">
                                     <img
                                         :src="file.filePath"
-                                        class="img-fluid"
-                                        width="250"
+                                        class="img-fluid mb-3"
                                     />
                                 </a>
                             </div>
