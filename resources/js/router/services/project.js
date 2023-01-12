@@ -1,4 +1,7 @@
+import ticket from "./project/ticket";
+
 export default [
+    ...ticket,
     {
         path: "/project",
         component: () => import("../../pages/project/Index.vue"),

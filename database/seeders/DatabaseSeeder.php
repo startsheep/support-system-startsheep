@@ -18,12 +18,11 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        User::factory()->create([
-            'email' => 'admin@mailinator.com',
-        ]);
-
         $this->call([
-            TicketSeeder::class,
+            ProjectSeeder::class,
+            UserSeeder::class,
+            RoleSeeder::class,
+            // TicketSeeder::class,
             TicketStatusSeeder::class
         ]);
     }

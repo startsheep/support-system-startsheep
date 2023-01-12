@@ -1,6 +1,6 @@
 <script>
 import Loader from "../../components/Loader.vue";
-import Ticket from "./components/Ticket.vue";
+import Ticket from "./components/ticket/Index.vue";
 
 export default {
     props: ["id"],

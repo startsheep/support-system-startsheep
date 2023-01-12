@@ -37,13 +37,25 @@ export default {
         dateTime(value, format) {
             return moment(value).format(format ?? "YYYY-MM-DD HH:mm");
         },
+        onBack() {
+            return this.$router.go(-1);
+        },
     },
     components: { Loader, Properties, General, Comment },
 };
 </script>
 
 <template>
-    <h1 class="h3 mb-3">{{ this.$route.name + " " + ticket.ticketCode }}</h1>
+    <div class="d-flex">
+        <router-link class="text-dark mb-3 me-2" to="" @click="onBack()"
+            ><span class="material-symbols-outlined">
+                chevron_left
+            </span></router-link
+        >
+        <h1 class="h3 mb-3">
+            {{ this.$route.name + " " + ticket.ticketCode }}
+        </h1>
+    </div>
 
     <div class="row">
         <div class="col-lg-8">

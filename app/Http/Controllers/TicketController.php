@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TicketMessage;
 use App\Http\Requests\Ticket\CreateRequest;
 use App\Http\Requests\Ticket\UpdateRequest;
 use App\Http\Resources\Ticket\TicketCollection;
@@ -74,6 +75,7 @@ class TicketController extends Controller
     public function multipleDestroy(Request $request)
     {
         return DB::transaction(function () use ($request) {
+            TicketMessage::dispatch("Multiple Ticket Deleted");
             return $this->ticketService->destroy($request->deleted_data);
         });
     }

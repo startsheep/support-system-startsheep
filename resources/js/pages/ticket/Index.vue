@@ -4,6 +4,7 @@ import Pagination from "../../components/Pagination.vue";
 import Delete from "../../components/notifications/Detele.vue";
 import Resolve from "../../components/notifications/Resolve.vue";
 import Multiselect from "vue-multiselect";
+import PusherUtil from "../../store/utils/pusher";
 
 export default {
     data() {
@@ -26,6 +27,10 @@ export default {
     mounted() {
         this.getTickets();
         this.getStaffs();
+
+        PusherUtil.getMessage("tickets", "TicketMessage", (response) => {
+            this.getTickets();
+        });
     },
     methods: {
         getStaffs(search = "") {

@@ -5,6 +5,7 @@ namespace App\Http\Searches\Filters\Project;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Searches\Contracts\FilterContract;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class Query implements FilterContract
@@ -13,19 +14,18 @@ class Query implements FilterContract
     protected $query;
 
     /**
-     * @param string|null $query
-     * @return void
-     */
-    public function __construct($query)
-    {
-        $this->query = $query;
-    }
-
-    /**
      * @return mixed
      */
     public function handle(Builder $query, Closure $next)
     {
+        $user = auth()->user();
+
+        if ($user->hasRole([User::ROLE_STAFF, User::ROLE_CUSTOMER])) {
+            $query->whereHas('userHasProject', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            });
+        }
+
         return $next($query);
     }
 

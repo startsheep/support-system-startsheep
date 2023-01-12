@@ -28,15 +28,15 @@ class RoleSeeder extends Seeder
         $access[1]['Staff'] = ['index', 'create', 'edit', 'delete'];
         $access[1]['Customer'] = ['index', 'create', 'edit', 'delete'];
         $access[1]['Project'] = ['index', 'create', 'edit', 'delete', 'show'];
-        $access[1]['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo', 'resolve'];
+        $access[1]['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo', 'resolve', 'edit'];
 
         $access[2]['Home'] = ['index'];
         $access[2]['Project'] = ['index', 'show'];
         $access[2]['Ticket'] = ['index', 'show', 'properties', 'general', 'resolve'];
 
         $access[3]['Home'] = ['index'];
-        $access[3]['Project'] = ['index', 'create', 'edit', 'delete', 'show'];
-        $access[3]['Ticket'] = ['index', 'show', 'general', 'create'];
+        $access[3]['Project'] = ['index', 'edit', 'show'];
+        $access[3]['Ticket'] = ['create', 'delete', 'show', 'general'];
 
         $this->disableForeignKeys();
         $this->truncate('roles');
@@ -47,7 +47,7 @@ class RoleSeeder extends Seeder
         $permission['Staff'] = ['index', 'create', 'edit', 'delete'];
         $permission['Customer'] = ['index', 'create', 'edit', 'delete'];
         $permission['Project'] = ['index', 'create', 'edit', 'delete', 'show'];
-        $permission['Ticket'] = ['index', 'create', 'delete', 'show', 'properties', 'general', 'assignTo', 'resolve'];
+        $permission['Ticket'] = ['index', 'edit', 'create', 'delete', 'show', 'properties', 'general', 'assignTo', 'resolve'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {
@@ -78,8 +78,14 @@ class RoleSeeder extends Seeder
             }
         }
 
-        $user = User::findOrFail(1);
-        $user->assignRole(Role::where('name', 'Admin')->first());
+        $user = User::where('email', 'admin@mailinator.com')->first();
+        $user->assignRole(Role::where('id', 1)->first());
+
+        $user = User::where('email', 'staff@mailinator.com')->first();
+        $user->assignRole(Role::where('id', 2)->first());
+
+        $user = User::where('email', 'customer@mailinator.com')->first();
+        $user->assignRole(Role::where('id', 3)->first());
 
         $this->enableForeignKeys();
     }

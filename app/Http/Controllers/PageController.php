@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageCreated;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -13,7 +14,9 @@ class PageController extends Controller
 
     public function admin()
     {
-        return view('app');
+        MessageCreated::dispatch("Hello World");
+        return "OK";
+        // return view('app');
     }
 
     public function auth()

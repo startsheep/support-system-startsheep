@@ -1,12 +1,17 @@
 <script>
-import Loader from "../../../components/Loader.vue";
-import Pagination from "../../../components/Pagination.vue";
+import Loader from "../../../../components/Loader.vue";
+import Pagination from "../../../../components/Pagination.vue";
+import PusherUtil from "../../../../store/utils/pusher";
+import Cookies from "js-cookie";
 
 export default {
     props: ["id"],
     data() {
         return {
             isLoading: false,
+            search: "",
+
+            user: {},
             tickets: [],
             metaPagination: [],
             pagination: {
@@ -17,14 +22,24 @@ export default {
     },
     mounted() {
         this.getTickets();
+        this.getUser();
+        PusherUtil.getMessage("tickets", "TicketMessage", (response) => {
+            console.log(response);
+            this.getTickets();
+        });
     },
     methods: {
+        getUser() {
+            this.user = JSON.parse(Cookies.get("user"));
+            return this.$store.getters.getUser;
+        },
         getTickets() {
             this.isLoading = true;
             const params = [
                 `per_page=${this.pagination.perPage}`,
                 `page=${this.pagination.page}`,
                 `project=${this.id}`,
+                `search=${this.search}`,
             ].join("&");
             this.$store
                 .dispatch("getData", ["ticket", params])
@@ -37,6 +52,11 @@ export default {
                     this.isLoading = false;
                     console.log(error);
                 });
+        },
+        onSearch() {
+            setTimeout(() => {
+                this.getTickets();
+            }, 1000);
         },
         onPageChange(page) {
             this.pagination.page = page;
@@ -65,11 +85,42 @@ export default {
             class="card-header d-flex justify-content-between align-items-center"
         >
             <h5 class="card-title mb-0">Ticket Project</h5>
-            <router-link to="" class="btn btn-primary"
-                >Kanban Board</router-link
-            >
+            <div>
+                <router-link to="" class="btn btn-primary"
+                    >Kanban Board</router-link
+                >
+            </div>
         </div>
         <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="mb-2">
+                    <router-link
+                        :to="'/'"
+                        class="btn btn-primary me-2"
+                        v-if="user.roles[0].name != 'Admin'"
+                        >Create New Ticket</router-link
+                    >
+                </div>
+                <div
+                    class="d-flex justify-content-end flex-md-row flex-xs-column align-items-center"
+                >
+                    <div class="me-2">
+                        <input
+                            type="search"
+                            class="form-control"
+                            style="margin-top: -13px"
+                            @keyup="onSearch"
+                            v-model="search"
+                            placeholder="Search..."
+                        />
+                    </div>
+
+                    <Pagination
+                        :pagination="metaPagination"
+                        @onPageChange="onPageChange($event)"
+                    />
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover border-top">
                     <thead>
@@ -83,7 +134,15 @@ export default {
                     <tbody>
                         <tr v-for="(ticket, index) in tickets" :key="index">
                             <td>
-                                {{ ticket.ticketCode }}
+                                <router-link
+                                    :to="{
+                                        name: 'Ticket Detail',
+                                        params: { id: ticket.id },
+                                    }"
+                                    class="text-dark"
+                                >
+                                    {{ ticket.ticketCode }}
+                                </router-link>
                             </td>
                             <td v-html="ticket.ticketTitle"></td>
                             <td
@@ -103,10 +162,6 @@ export default {
                     </tbody>
                 </table>
             </div>
-            <Pagination
-                :pagination="metaPagination"
-                @onPageChange="onPageChange($event)"
-            />
         </div>
     </div>
 </template>
