@@ -22,6 +22,14 @@ class TicketServiceImplement extends Service implements TicketService
         $this->mainRepository = $mainRepository;
     }
 
+    public function getWhereIn(array $data)
+    {
+        $tickets = $this->mainRepository->getWhereIn($data)->get();
+        $tickets->load(['files', 'createdBy', 'staff', 'project', 'ticketStatus']);
+
+        return $tickets;
+    }
+
     public function create($attributes)
     {
         $attributes['ticket_code'] = $this->mainRepository->codeTicket();

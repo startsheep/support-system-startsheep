@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CreateTicketMessage;
 use App\Events\TicketMessage;
 use App\Http\Requests\Ticket\CreateRequest;
 use App\Http\Requests\Ticket\UpdateRequest;
@@ -33,8 +34,10 @@ class TicketController extends Controller
     public function store(CreateRequest $request)
     {
         return DB::transaction(function () use ($request) {
-            TicketMessage::dispatch("Ticket Created");
-            return $this->ticketService->create($request->all());
+            $ticket = $this->ticketService->create($request->all());
+            $ticket->load(['files', 'createdBy', 'staff', 'project', 'ticketStatus']);
+            CreateTicketMessage::dispatch($ticket);
+            return $ticket;
         });
     }
 
@@ -48,24 +51,31 @@ class TicketController extends Controller
     public function update(UpdateRequest $request, $id)
     {
         return DB::transaction(function () use ($request, $id) {
-            TicketMessage::dispatch("Ticket Updated");
-            return $this->ticketService->update($id, $request->all());
+            $ticket = $this->ticketService->update($id, $request->all());
+            TicketMessage::dispatch($this->ticketService->findOrFail($id));
+            return $ticket;
         });
     }
 
     public function assignTo(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            TicketMessage::dispatch("Ticket Assigned");
-            return $this->ticketService->assignTo($request->all());
+            $tickets = $this->ticketService->assignTo($request->all());
+            foreach ($request->assigned_data as $id) {
+                TicketMessage::dispatch($this->ticketService->findOrFail($id));
+            }
+            return $tickets;
         });
     }
 
     public function resolve(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            TicketMessage::dispatch("Ticket Resolved");
-            return $this->ticketService->resolve($request->resolved_data);
+            $tickets = $this->ticketService->resolve($request->resolved_data);
+            foreach ($request->resolved_data as $id) {
+                TicketMessage::dispatch($this->ticketService->findOrFail($id));
+            }
+            return $tickets;
         });
     }
 
@@ -80,8 +90,14 @@ class TicketController extends Controller
     public function multipleDestroy(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            TicketMessage::dispatch("Multiple Ticket Deleted");
-            return $this->ticketService->destroy($request->deleted_data);
+            $tickets = $this->ticketService->destroy($request->deleted_data);
+            foreach ($request->deleted_data as $id) {
+                TicketMessage::dispatch([
+                    'message' => "deleted",
+                    'id' => $id
+                ]);
+            }
+            return $tickets;
         });
     }
 }

@@ -11,4 +11,6 @@ interface TicketService extends BaseService
     public function resolve(array $data);
 
     public function assignTo(array $data);
+
+    public function getWhereIn(array $data);
 }

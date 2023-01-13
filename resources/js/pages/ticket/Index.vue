@@ -5,6 +5,7 @@ import Delete from "../../components/notifications/Detele.vue";
 import Resolve from "../../components/notifications/Resolve.vue";
 import Multiselect from "vue-multiselect";
 import PusherUtil from "../../store/utils/pusher";
+import CamelCase from "../../store/utils/camelCase";
 
 export default {
     data() {
@@ -28,8 +29,26 @@ export default {
         this.getTickets();
         this.getStaffs();
 
+        PusherUtil.getMessage("tickets", "CreateTicketMessage", (response) => {
+            this.tickets.unshift(CamelCase.toCamelCase(response.message));
+        });
+
         PusherUtil.getMessage("tickets", "TicketMessage", (response) => {
-            this.getTickets();
+            if (response.message.message == "deleted") {
+                const index = this.tickets.findIndex(
+                    (ticket) => ticket.id == response.id
+                );
+                this.tickets.splice(index, 1);
+            } else {
+                const index = this.tickets.findIndex(
+                    (ticket) => ticket.id == response.message.id
+                );
+                this.tickets.splice(
+                    index,
+                    1,
+                    CamelCase.toCamelCase(response.message)
+                );
+            }
         });
     },
     methods: {
@@ -78,17 +97,14 @@ export default {
                 resolved_data: resolvedData,
             };
 
-            this.isLoading = true;
             this.$store
                 .dispatch("putData", ["ticket/resolve", data])
                 .then((response) => {
-                    this.isLoading = false;
                     this.getTickets();
                     this.ticketSelected = [];
                     this.$toast.success("data has been resolved");
                 })
                 .catch((error) => {
-                    this.isLoading = false;
                     console.log(error);
                 });
         },
@@ -104,20 +120,17 @@ export default {
                 deleted_data: deletedData,
             };
 
-            this.isLoading = true;
             this.$store
                 .dispatch("deleteMultipleData", [
                     "ticket/multiple-delete",
                     data,
                 ])
                 .then((response) => {
-                    this.isLoading = false;
                     this.getTickets();
                     this.ticketSelected = [];
                     this.$toast.success("data has been deleted");
                 })
                 .catch((error) => {
-                    this.isLoading = false;
                     console.log(error);
                 });
         },
@@ -134,18 +147,15 @@ export default {
                 staff_id: this.assignTo.id,
             };
 
-            this.isLoading = true;
             this.$store
                 .dispatch("putData", ["ticket/assign", data])
                 .then((response) => {
-                    this.isLoading = false;
                     this.getTickets();
                     this.ticketSelected = [];
                     this.assignTo = null;
                     this.$toast.success("data has been assigned");
                 })
                 .catch((error) => {
-                    this.isLoading = false;
                     console.log(error);
                 });
         },

@@ -2,6 +2,7 @@
 import Loader from "../../../../components/Loader.vue";
 import Pagination from "../../../../components/Pagination.vue";
 import PusherUtil from "../../../../store/utils/pusher";
+import CamelCase from "../../../../store/utils/camelCase";
 import Cookies from "js-cookie";
 
 export default {
@@ -23,9 +24,27 @@ export default {
     mounted() {
         this.getTickets();
         this.getUser();
+
+        PusherUtil.getMessage("tickets", "CreateTicketMessage", (response) => {
+            this.tickets.unshift(CamelCase.toCamelCase(response.message));
+        });
+
         PusherUtil.getMessage("tickets", "TicketMessage", (response) => {
-            console.log(response);
-            this.getTickets();
+            if (response.message.message == "deleted") {
+                const index = this.tickets.findIndex(
+                    (ticket) => ticket.id == response.message.id
+                );
+                this.tickets.splice(index, 1);
+            } else {
+                const index = this.tickets.findIndex(
+                    (ticket) => ticket.id == response.message.id
+                );
+                this.tickets.splice(
+                    index,
+                    1,
+                    CamelCase.toCamelCase(response.message)
+                );
+            }
         });
     },
     methods: {
