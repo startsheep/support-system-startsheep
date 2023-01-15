@@ -153,12 +153,28 @@ export default {
                                         {{ customer.name }}
                                     </td>
                                     <td v-html="customer.email"></td>
-                                    <td
-                                        v-html="
-                                            customer.customerHasProject.project
-                                                .projectName
-                                        "
-                                    ></td>
+                                    <td>
+                                        <p
+                                            class="p-0 m-0"
+                                            v-if="
+                                                customer.customerHasProject
+                                                    .length > 0
+                                            "
+                                            v-for="(
+                                                project, index
+                                            ) in customer.customerHasProject"
+                                            :key="index"
+                                            v-html="
+                                                '- ' +
+                                                project.project.projectName
+                                            "
+                                        ></p>
+                                        <p
+                                            class="p-0 m-0"
+                                            v-else
+                                            v-html="'- ' + 'No Project'"
+                                        ></p>
+                                    </td>
                                     <td>
                                         <router-link
                                             :to="{

@@ -509,7 +509,7 @@ export default {
                 </div>
             </div>
         </div>
-        <div class="card-body pb-0">
+        <div class="card-body">
             <p class="mb-4">
                 {{ comment.message }}
             </p>

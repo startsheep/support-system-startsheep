@@ -152,12 +152,27 @@ export default {
                                         {{ staff.name }}
                                     </td>
                                     <td v-html="staff.email"></td>
-                                    <td
-                                        v-html="
-                                            staff.staffHasProject.project
-                                                .projectName
-                                        "
-                                    ></td>
+                                    <td>
+                                        <p
+                                            class="p-0 m-0"
+                                            v-if="
+                                                staff.staffHasProject.length > 0
+                                            "
+                                            v-for="(
+                                                project, index
+                                            ) in staff.staffHasProject"
+                                            :key="index"
+                                            v-html="
+                                                '- ' +
+                                                project.project.projectName
+                                            "
+                                        ></p>
+                                        <p
+                                            class="p-0 m-0"
+                                            v-else
+                                            v-html="'- ' + 'No Project'"
+                                        ></p>
+                                    </td>
                                     <td>
                                         <router-link
                                             :to="{

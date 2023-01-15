@@ -1,16 +1,22 @@
 <script>
 import Loader from "../../../components/Loader.vue";
 import Success from "../../../components/notifications/Success.vue";
+import Multiselect from "vue-multiselect";
 
 export default {
     props: ["id"],
     data() {
         return {
-            customer: {},
+            customer: {
+                name: "",
+                email: "",
+                projectId: [],
+            },
             errors: [],
             projects: [],
 
             isLoading: false,
+            isLoadingProject: false,
             message: "",
         };
     },
@@ -19,16 +25,17 @@ export default {
         this.getProjects();
     },
     methods: {
-        getProjects() {
-            this.isLoading = true;
+        getProjects(search = "") {
+            this.isLoadingProject = true;
+            const params = [`search=${search}`].join("&");
             this.$store
-                .dispatch("getData", ["project", []])
+                .dispatch("getData", ["project", params])
                 .then((response) => {
-                    this.isLoading = false;
+                    this.isLoadingProject = false;
                     this.projects = response.data;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
+                    this.isLoadingProject = false;
                     console.log(error);
                 });
         },
@@ -39,9 +46,11 @@ export default {
                 .dispatch("showData", ["user/customer", this.id])
                 .then((response) => {
                     this.isLoading = false;
-                    this.customer = response.data;
-                    this.customer.projectId =
-                        response.data.customerHasProject.projectId;
+                    this.customer.name = response.data.name;
+                    this.customer.email = response.data.email;
+                    response.data.customerHasProject.forEach((project) => {
+                        this.customer.projectId.push(project.project);
+                    });
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -50,7 +59,9 @@ export default {
         },
         handleSubmit() {
             this.isLoading = true;
-
+            this.customer.projectId = this.customer.projectId.map(
+                (project) => project.id
+            );
             this.$store
                 .dispatch("updateData", [
                     "user/customer",
@@ -68,7 +79,7 @@ export default {
                 });
         },
     },
-    components: { Loader, Success },
+    components: { Loader, Success, Multiselect },
 };
 </script>
 <template>
@@ -104,21 +115,18 @@ export default {
                         </div>
                         <div class="mb-3">
                             <label for="projectId">Assign To Project</label>
-                            <select
+                            <Multiselect
+                                :searchable="true"
+                                :internal-search="false"
+                                @search-change="getProjects"
                                 v-model="customer.projectId"
-                                id="projectId"
-                                class="form-control"
-                            >
-                                <option value="" disabled selected>
-                                    select project
-                                </option>
-                                <option
-                                    :value="project.id"
-                                    v-for="(project, index) in projects"
-                                    :key="index"
-                                    v-html="project.projectName"
-                                ></option>
-                            </select>
+                                :options="projects"
+                                :custom-label="(project) => project.projectName"
+                                placeholder="select Project"
+                                track-by="id"
+                                :loading="isLoadingProject"
+                                multiple
+                            />
                             <Error
                                 :errors="errors.projectId"
                                 v-if="errors.projectId"

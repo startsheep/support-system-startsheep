@@ -1,4 +1,5 @@
 <script>
+import { Multiselect } from "vue-multiselect";
 import Loader from "../../../components/Loader.vue";
 import Success from "../../../components/notifications/Success.vue";
 
@@ -6,7 +7,11 @@ export default {
     props: ["id"],
     data() {
         return {
-            staff: {},
+            staff: {
+                name: "",
+                email: "",
+                projectId: [],
+            },
             errors: [],
             projects: [],
 
@@ -19,10 +24,11 @@ export default {
         this.getProjects();
     },
     methods: {
-        getProjects() {
+        getProjects(search = "") {
             this.isLoading = true;
+            const params = [`search=${search}`].join("&");
             this.$store
-                .dispatch("getData", ["project", []])
+                .dispatch("getData", ["project", params])
                 .then((response) => {
                     this.isLoading = false;
                     this.projects = response.data;
@@ -39,9 +45,11 @@ export default {
                 .dispatch("showData", ["user/staff", this.id])
                 .then((response) => {
                     this.isLoading = false;
-                    this.staff = response.data;
-                    this.staff.projectId =
-                        response.data.staffHasProject.projectId;
+                    this.staff.name = response.data.name;
+                    this.staff.email = response.data.email;
+                    response.data.staffHasProject.forEach((project) => {
+                        this.staff.projectId.push(project.project);
+                    });
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -50,7 +58,9 @@ export default {
         },
         handleSubmit() {
             this.isLoading = true;
-
+            this.staff.projectId = this.staff.projectId.map((project) => {
+                return project.id;
+            });
             this.$store
                 .dispatch("updateData", ["user/staff", this.id, this.staff])
                 .then((response) => {
@@ -64,7 +74,7 @@ export default {
                 });
         },
     },
-    components: { Loader, Success },
+    components: { Loader, Success, Multiselect },
 };
 </script>
 <template>
@@ -100,21 +110,19 @@ export default {
                         </div>
                         <div class="mb-3">
                             <label for="projectId">Assign To Project</label>
-                            <select
+                            <Multiselect
+                                :searchable="true"
+                                :internal-search="false"
+                                @search-change="getProjects"
                                 v-model="staff.projectId"
-                                id="projectId"
-                                class="form-control"
+                                :options="projects"
+                                :custom-label="(project) => project.projectName"
+                                placeholder="select Project"
+                                track-by="id"
+                                :loading="isLoadingProject"
+                                multiple
                             >
-                                <option value="" disabled selected>
-                                    select project
-                                </option>
-                                <option
-                                    :value="project.id"
-                                    v-for="(project, index) in projects"
-                                    :key="index"
-                                    v-html="project.projectName"
-                                ></option>
-                            </select>
+                            </Multiselect>
                             <Error
                                 :errors="errors.projectId"
                                 v-if="errors.projectId"

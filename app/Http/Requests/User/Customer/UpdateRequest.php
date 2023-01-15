@@ -29,7 +29,7 @@ class UpdateRequest extends FormRequest
         return [
             'email' => 'required|email|unique:users,email,' . $this->route('id'),
             'name' => 'required|string',
-            'project_id' => 'required|integer|exists:projects,id',
+            'project_id' => 'required|array|exists:projects,id',
         ];
     }
 

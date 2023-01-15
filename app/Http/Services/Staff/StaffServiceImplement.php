@@ -51,7 +51,9 @@ class StaffServiceImplement extends Service implements StaffService
         $user = $this->mainRepository->findOrFail($id);
         $user->update($attributes);
 
-        $this->updateAssignProject($user, $attributes);
+        $user->staffHasProject()->delete();
+
+        $this->assignToProject($user, $attributes);
 
         return $user;
     }
@@ -70,15 +72,12 @@ class StaffServiceImplement extends Service implements StaffService
 
     public function assignToProject($user, $attributes)
     {
-        return $user->staffHasProject()->create([
-            'project_id' => $attributes['project_id']
-        ]);
-    }
+        foreach ($attributes['project_id'] as $projectId) {
+            $user->staffHasProject()->create([
+                'project_id' => $projectId
+            ]);
+        }
 
-    public function updateAssignProject($user, $attributes)
-    {
-        return $user->staffHasProject()->update([
-            'project_id' => $attributes['project_id']
-        ]);
+        return $user;
     }
 }

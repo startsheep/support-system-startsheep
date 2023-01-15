@@ -2,19 +2,23 @@
 import Error from "../../../components/Error.vue";
 import Loader from "../../../components/Loader.vue";
 import Success from "../../../components/notifications/Success.vue";
+import Multiselect from "vue-multiselect";
+
 export default {
     data() {
         return {
             form: {
                 email: "",
                 name: "",
-                projectId: "",
+                projectId: [],
             },
 
             errors: {},
             projects: [],
+            projectId: [],
 
             isLoading: false,
+            isLoadingProject: false,
             message: "",
         };
     },
@@ -22,21 +26,24 @@ export default {
         this.getProjects();
     },
     methods: {
-        getProjects() {
-            this.isLoading = true;
+        getProjects(search = "") {
+            this.isLoadingProject = true;
+            const params = [`search=${search}`].join("&");
+
             this.$store
-                .dispatch("getData", ["project", []])
+                .dispatch("getData", ["project", params])
                 .then((response) => {
-                    this.isLoading = false;
+                    this.isLoadingProject = false;
                     this.projects = response.data;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
+                    this.isLoadingProject = false;
                     console.log(error);
                 });
         },
         handleSubmit() {
             this.isLoading = true;
+            this.form.projectId = this.projectId.map((project) => project.id);
             this.$store
                 .dispatch("postData", ["user/customer", this.form])
                 .then((response) => {
@@ -50,7 +57,7 @@ export default {
                 });
         },
     },
-    components: { Error, Loader, Success },
+    components: { Error, Loader, Success, Multiselect },
 };
 </script>
 <template>
@@ -86,21 +93,19 @@ export default {
                         </div>
                         <div class="mb-3">
                             <label for="projectId">Assign To Project</label>
-                            <select
-                                v-model="form.projectId"
-                                id="projectId"
-                                class="form-control"
+                            <Multiselect
+                                :searchable="true"
+                                :internal-search="false"
+                                @search-change="getProjects"
+                                v-model="projectId"
+                                :options="projects"
+                                :custom-label="(project) => project.projectName"
+                                placeholder="select Project"
+                                track-by="id"
+                                :loading="isLoadingProject"
+                                multiple
                             >
-                                <option value="" disabled selected>
-                                    select project
-                                </option>
-                                <option
-                                    :value="project.id"
-                                    v-for="(project, index) in projects"
-                                    :key="index"
-                                    v-html="project.projectName"
-                                ></option>
-                            </select>
+                            </Multiselect>
                             <Error
                                 :errors="errors.projectId"
                                 v-if="errors.projectId"
