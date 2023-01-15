@@ -1,6 +1,7 @@
 <script>
 import jsCookie from "js-cookie";
 import Loader from "../../../components/Loader.vue";
+import Multiselect from "vue-multiselect";
 
 export default {
     props: ["ticket"],
@@ -9,6 +10,7 @@ export default {
             ticketStatus: [],
             staff: [],
             isLoading: false,
+            isLoadingStaff: false,
         };
     },
     mounted() {
@@ -17,19 +19,20 @@ export default {
         this.getStaff();
     },
     methods: {
-        getStaff() {
+        getStaff(search = "") {
             let role = JSON.parse(jsCookie.get("user")).roles[0].name;
 
             if (role != "Customer") {
-                this.isLoading = true;
+                this.isLoadingStaff = true;
+                const params = [`search=${search}`].join("&");
                 this.$store
-                    .dispatch("getData", ["user/staff", []])
+                    .dispatch("getData", ["user/staff", params])
                     .then((response) => {
-                        this.isLoading = false;
+                        this.isLoadingStaff = false;
                         this.staff = response.data;
                     })
                     .catch((error) => {
-                        this.isLoading = false;
+                        this.isLoadingStaff = false;
                         console.log(error);
                     });
             }
@@ -67,7 +70,7 @@ export default {
             this.isLoading = true;
             const attributes = {
                 ticketStatus: this.ticket.ticketStatus.id,
-                staffId: this.ticket.staffId,
+                staffId: this.ticket.staff.id,
                 ticketPriority: this.ticket.ticketPriority,
                 description: this.ticket.description,
                 ticketTitle: this.ticket.ticketTitle,
@@ -78,6 +81,7 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     this.$emit("updateTicket", 1);
+                    this.$toast.success("Ticket updated successfully");
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -85,7 +89,7 @@ export default {
                 });
         },
     },
-    components: { Loader },
+    components: { Loader, Multiselect },
 };
 </script>
 
@@ -129,19 +133,18 @@ export default {
                 </div>
                 <div class="mb-3" v-if="$can('assignTo', 'Ticket')">
                     <label class="fw-bolder">Assign to staff</label>
-                    <select
-                        class="form-select"
-                        v-model="ticket.staffId"
-                        v-if="ticket.ticketStatus"
+                    <Multiselect
+                        :searchable="true"
+                        :internal-search="false"
+                        @search-change="getStaff"
+                        v-model="ticket.staff"
+                        :options="staff"
+                        :custom-label="(staff) => staff.name"
+                        placeholder="select staff"
+                        track-by="id"
+                        :loading="isLoadingStaff"
                     >
-                        <option value="" disabled selected>select staff</option>
-                        <option
-                            v-for="(staff, index) in staff"
-                            :key="index"
-                            :value="staff.id"
-                            v-html="staff.name"
-                        ></option>
-                    </select>
+                    </Multiselect>
                 </div>
                 <div class="mt-4 mb-3">
                     <button class="btn btn-success form-control">Update</button>

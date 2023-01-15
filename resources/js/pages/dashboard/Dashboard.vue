@@ -1,9 +1,12 @@
 <script>
+import Admin from "./Admin.vue";
+import Staff from "./Staff.vue";
 import Customer from "./Customer.vue";
 
 export default {
     data() {
         return {
+            isStaff: false,
             isCustomer: false,
             isDefault: false,
         };
@@ -18,6 +21,8 @@ export default {
                 .then((response) => {
                     if (response.role[0] == "Customer") {
                         this.isCustomer = true;
+                    } else if (response.role[0] == "Staff") {
+                        this.isStaff = true;
                     } else {
                         this.isDefault = true;
                     }
@@ -27,7 +32,7 @@ export default {
                 });
         },
     },
-    components: { Customer },
+    components: { Customer, Admin, Staff },
 };
 </script>
 
@@ -35,5 +40,10 @@ export default {
     <div v-if="isCustomer">
         <Customer />
     </div>
-    <div v-if="isDefault">Hallo</div>
+    <div v-if="isStaff">
+        <Staff />
+    </div>
+    <div v-if="isDefault">
+        <Admin />
+    </div>
 </template>

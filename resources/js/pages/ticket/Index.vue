@@ -173,6 +173,10 @@ export default {
         onAssign() {
             $("#assignTo").modal("show");
         },
+        onPageChange(page) {
+            this.pagination.page = page;
+            this.getTickets();
+        },
         customLabel(option) {
             return `${option.name}`;
         },
