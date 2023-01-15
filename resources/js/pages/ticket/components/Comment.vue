@@ -2,6 +2,7 @@
 import Loader from "../../../components/Loader.vue";
 import moment from "moment";
 import PusherUtil from "../../../store/utils/pusher";
+import camelCase from "../../../store/utils/camelCase";
 
 export default {
     data() {
@@ -9,8 +10,11 @@ export default {
             isLoading: false,
             isLoadingComment: false,
             isShow: true,
+            isPaginate: true,
             createForm: true,
             editForm: false,
+            firstComment: true,
+            lastComment: false,
 
             form: {
                 message: "",
@@ -24,7 +28,9 @@ export default {
             comments: [],
             pagination: {
                 page: 1,
-                perPage: 10,
+                to: 0,
+                total: 0,
+                perPage: 2,
             },
         };
     },
@@ -32,12 +38,33 @@ export default {
         this.getComments();
         this.getUser();
 
-        PusherUtil.privateMessage(
-            "comments." + this.$route.params.id,
+        PusherUtil.getMessage(
+            "tickets." + this.$route.params.id,
+            "CreateCommentMessage",
+            (response) => {
+                this.comments.push(camelCase.toCamelCase(response.message));
+            }
+        );
+
+        PusherUtil.getMessage(
+            "tickets." + this.$route.params.id,
             "CommentMessage",
             (response) => {
-                console.log(response);
-                this.getComments();
+                if (response.message.message == "deleted") {
+                    const index = this.comments.findIndex(
+                        (comment) => comment.id == response.message.id
+                    );
+                    this.comments.splice(index, 1);
+                } else {
+                    const index = this.comments.findIndex(
+                        (comment) => comment.id === response.message.id
+                    );
+                    this.comments.splice(
+                        index,
+                        1,
+                        camelCase.toCamelCase(response.message)
+                    );
+                }
             }
         );
     },
@@ -83,6 +110,8 @@ export default {
                 .dispatch("getData", [`comment`, params])
                 .then((response) => {
                     this.comments = response.data;
+                    this.pagination.to = response.meta.to;
+                    this.pagination.total = response.meta.total;
                 })
                 .catch((error) => {
                     this.isLoadingComment = false;
@@ -122,6 +151,7 @@ export default {
                 .dispatch("deleteData", [`comment`, id])
                 .then((response) => {
                     this.isLoadingComment = false;
+                    this.$toast.success("Comment deleted successfully");
                     this.getComments();
                 })
                 .catch((error) => {
@@ -139,6 +169,9 @@ export default {
                     this.form.message = "";
                     this.form.files = [];
                     this.previewFiles = [];
+                    this.firstComment = true;
+                    this.lastComment = false;
+                    this.$toast.success("Comment created successfully");
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -156,6 +189,10 @@ export default {
                     this.form.message = "";
                     this.form.files = [];
                     this.previewFiles = [];
+                    this.firstComment = true;
+                    this.lastComment = false;
+                    this.isPaginate = true;
+                    this.$toast.success("Comment updated successfully");
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -186,15 +223,31 @@ export default {
             this.editForm = true;
             this.createForm = false;
             this.isShow = false;
+            this.isPaginate = false;
             this.getComment(id);
         },
         onCancel() {
             this.editForm = false;
             this.createForm = true;
             this.isShow = true;
+            this.firstComment = true;
+            this.lastComment = false;
+            this.isPaginate = true;
+        },
+        onChangePage(e) {
+            this.pagination.perPage += e;
+            this.getComments();
+        },
+        onComment() {
+            this.firstComment = false;
+            this.lastComment = true;
+        },
+        onCancelComment() {
+            this.firstComment = true;
+            this.lastComment = false;
         },
         dateTime(value, format) {
-            return moment(value).format(format ?? "YYYY-MM-DD HH:mm");
+            return moment(value).fromNow();
         },
     },
     components: { Loader },
@@ -202,67 +255,6 @@ export default {
 </script>
 
 <template>
-    <div
-        class="card"
-        v-for="(comment, index) in comments"
-        :key="index"
-        v-if="isShow"
-    >
-        <div class="card-header d-flex justify-content-between">
-            <div class="d-flex">
-                <img
-                    :src="`https://ui-avatars.com/api/?background=random&size=30&rounded=true&length=2&name=${comment.user.name}`"
-                />
-                <div class="card-header-sub ms-3">
-                    <span><b v-html="comment.user.name"></b></span><br />
-                    <span
-                        >Replied at
-                        {{
-                            dateTime(comment.createdAt, "HH:mm a, DD MMMM YYYY")
-                        }}</span
-                    >
-                </div>
-            </div>
-            <div class="d-flex" v-if="comment.user.id == user.id">
-                <div
-                    id="editComment"
-                    style="cursor: pointer"
-                    class="text-warning me-2"
-                    @click="onEdit(comment.id)"
-                >
-                    <span class="material-symbols-outlined"> edit_note </span>
-                </div>
-                <div
-                    id="deleteComment"
-                    style="cursor: pointer"
-                    class="text-danger"
-                    @click="deleteComment(comment.id)"
-                >
-                    <span class="material-symbols-outlined"> close </span>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <p class="mb-4">
-                {{ comment.message }}
-            </p>
-            <div v-if="comment.files && comment.files.length > 0">
-                <span><b>Attachments</b> :</span>
-                <div class="row mt-2">
-                    <div
-                        v-for="(file, index) in comment.files"
-                        :key="index"
-                        class="col-lg-3 col-md-4 col-sm-6 col-12"
-                    >
-                        <a :href="file.filePath" target="_blank">
-                            <img :src="file.filePath" class="img-fluid" />
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <form
         @submit.prevent="handleSubmit"
         method="post"
@@ -271,7 +263,7 @@ export default {
     >
         <div class="card">
             <Loader v-if="isLoading" />
-            <div class="card-header d-flex">
+            <div class="card-header d-flex pb-0">
                 <img
                     :src="`https://ui-avatars.com/api/?background=random&size=30&rounded=true&length=2&name=${user.name}`"
                 />
@@ -279,7 +271,15 @@ export default {
                     <span><b v-html="user.name"></b></span>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" v-if="firstComment">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="add a comment"
+                    @click="onComment"
+                />
+            </div>
+            <div class="card-body pb-0" v-if="lastComment">
                 <div class="mb-3">
                     <label>Write your message</label>
                     <textarea
@@ -346,7 +346,13 @@ export default {
                     </div>
                 </div>
             </div>
-            <div class="card-footer d-flex justify-content-end">
+            <div
+                class="card-footer d-flex justify-content-between"
+                v-if="lastComment"
+            >
+                <button class="btn btn-secondary" @click="onCancelComment">
+                    Cancel
+                </button>
                 <button class="btn btn-success">Submit</button>
             </div>
         </div>
@@ -460,4 +466,76 @@ export default {
             </div>
         </div>
     </form>
+
+    <div
+        class="card"
+        v-for="(comment, index) in comments"
+        :key="index"
+        v-if="isShow"
+    >
+        <div class="card-header d-flex justify-content-between pb-0">
+            <div class="d-flex align-items-center">
+                <img
+                    :src="`https://ui-avatars.com/api/?background=random&size=30&rounded=true&length=2&name=${comment.user.name}`"
+                />
+                <div class="card-header-sub ms-3">
+                    <span><b v-html="comment.user.name"></b> </span>
+                    <span class="fw-light ms-2">{{
+                        dateTime(comment.createdAt, "HH:mm a, DD MMMM YYYY")
+                    }}</span>
+                    <span
+                        class="fw-light ms-2 bg-warning badge"
+                        v-if="comment.createdAt != comment.updatedAt"
+                        >Edited</span
+                    >
+                </div>
+            </div>
+            <div class="d-flex" v-if="comment.user.id == user.id">
+                <div
+                    id="editComment"
+                    style="cursor: pointer"
+                    class="text-warning me-2"
+                    @click="onEdit(comment.id)"
+                >
+                    <span class="material-symbols-outlined"> edit_note </span>
+                </div>
+                <div
+                    id="deleteComment"
+                    style="cursor: pointer"
+                    class="text-danger"
+                    @click="deleteComment(comment.id)"
+                >
+                    <span class="material-symbols-outlined"> close </span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body pb-0">
+            <p class="mb-4">
+                {{ comment.message }}
+            </p>
+            <div v-if="comment.files && comment.files.length > 0">
+                <span><b>Attachments</b> :</span>
+                <div class="row mt-2">
+                    <div
+                        v-for="(file, index) in comment.files"
+                        :key="index"
+                        class="col-lg-3 col-md-4 col-sm-6 col-12"
+                    >
+                        <a :href="file.filePath" target="_blank">
+                            <img :src="file.filePath" class="img-fluid" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="isPaginate">
+        <button
+            class="btn btn-secondary form-control mb-4"
+            @click="onChangePage(2)"
+            v-if="pagination.total - pagination.to != 0"
+        >
+            View {{ pagination.total - pagination.to }} remaining older comments
+        </button>
+    </div>
 </template>

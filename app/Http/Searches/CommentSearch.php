@@ -2,6 +2,7 @@
 
 namespace App\Http\Searches;
 
+use App\Http\Searches\Filters\Comment\Sort;
 use App\Http\Searches\Filters\Comment\Ticket;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,8 @@ class CommentSearch extends HttpSearch
     protected function filters(): array
     {
         return [
-            Ticket::class
+            Ticket::class,
+            Sort::class
         ];
     }
 

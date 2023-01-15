@@ -1,4 +1,5 @@
 <script>
+import jsCookie from "js-cookie";
 import Loader from "../../../components/Loader.vue";
 
 export default {
@@ -12,22 +13,26 @@ export default {
     },
     mounted() {
         this.getTicketStatus();
-        this.getStaff();
         this.getPriorities();
+        this.getStaff();
     },
     methods: {
         getStaff() {
-            this.isLoading = true;
-            this.$store
-                .dispatch("getData", ["user/staff", []])
-                .then((response) => {
-                    this.isLoading = false;
-                    this.staff = response.data;
-                })
-                .catch((error) => {
-                    this.isLoading = false;
-                    console.log(error);
-                });
+            let role = JSON.parse(jsCookie.get("user")).roles[0].name;
+
+            if (role != "Customer") {
+                this.isLoading = true;
+                this.$store
+                    .dispatch("getData", ["user/staff", []])
+                    .then((response) => {
+                        this.isLoading = false;
+                        this.staff = response.data;
+                    })
+                    .catch((error) => {
+                        this.isLoading = false;
+                        console.log(error);
+                    });
+            }
         },
         getTicketStatus() {
             this.isLoading = true;
@@ -110,10 +115,6 @@ export default {
                         class="form-select"
                         v-if="ticket.ticketStatus"
                         v-model="ticket.ticketStatus.id"
-                        :disabled="
-                            ticket.ticketStatus.status == 'Closed' ||
-                            ticket.ticketStatus.status == 'Done'
-                        "
                     >
                         <option value="" disabled selected>
                             select status
@@ -132,10 +133,6 @@ export default {
                         class="form-select"
                         v-model="ticket.staffId"
                         v-if="ticket.ticketStatus"
-                        :disabled="
-                            ticket.ticketStatus.status == 'Closed' ||
-                            ticket.ticketStatus.status == 'Done'
-                        "
                     >
                         <option value="" disabled selected>select staff</option>
                         <option
