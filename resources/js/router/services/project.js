@@ -1,7 +1,4 @@
-import ticket from "./project/ticket";
-
 export default [
-    ...ticket,
     {
         path: "/project",
         component: () => import("../../pages/project/Index.vue"),
@@ -31,6 +28,16 @@ export default [
         path: "/project/:id/edit",
         component: () => import("../../pages/project/Edit.vue"),
         name: "Edit Project",
+        meta: {
+            middleware: "auth",
+        },
+        props: true,
+    },
+    {
+        path: "/project/:id/kanban-board",
+        component: () =>
+            import("../../pages/project/components/kanban/Index.vue"),
+        name: "Kanban Board",
         meta: {
             middleware: "auth",
         },

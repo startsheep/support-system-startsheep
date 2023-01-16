@@ -105,7 +105,9 @@ export default {
         >
             <h5 class="card-title mb-0">Ticket Project</h5>
             <div>
-                <router-link to="" class="btn btn-primary"
+                <router-link
+                    :to="{ name: 'Kanban Board', params: { id: id } }"
+                    class="btn btn-primary"
                     >Kanban Board</router-link
                 >
             </div>

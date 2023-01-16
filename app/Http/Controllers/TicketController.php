@@ -28,6 +28,10 @@ class TicketController extends Controller
         $factory = app()->make(TicketSearch::class);
         $tickets = $factory->apply()->paginate($request->per_page);
 
+        if ($request->isAll == 'true') {
+            $tickets = $factory->apply()->get();
+        }
+
         return new TicketCollection($tickets);
     }
 
@@ -76,6 +80,15 @@ class TicketController extends Controller
                 TicketMessage::dispatch($this->ticketService->findOrFail($id));
             }
             return $tickets;
+        });
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        return DB::transaction(function () use ($request, $id) {
+            $ticket = $this->ticketService->updateStatus($id, $request->all());
+            TicketMessage::dispatch($this->ticketService->findOrFail($id));
+            return $ticket;
         });
     }
 

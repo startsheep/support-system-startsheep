@@ -118,6 +118,13 @@ class TicketServiceImplement extends Service implements TicketService
         return $tickets->update(['staff_id' => $data['staff_id']]);
     }
 
+    public function updateStatus($id, array $data)
+    {
+        $tickets = parent::findOrFail($id);
+
+        return $tickets->update(['ticket_status' => $data['ticket_status']]);
+    }
+
     protected function multipleUpload($files, $ticket)
     {
         foreach ($files as $file) {

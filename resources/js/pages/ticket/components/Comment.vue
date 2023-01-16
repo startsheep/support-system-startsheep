@@ -287,6 +287,7 @@ export default {
                         rows="5"
                         placeholder="Write your message here..."
                         v-model="form.message"
+                        onfocus
                     ></textarea>
                 </div>
                 <div class="mb-3" v-if="previewFiles.length > 0">

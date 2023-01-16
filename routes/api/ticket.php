@@ -24,6 +24,9 @@ Route::middleware(['auth:sanctum'])->prefix('ticket')->group(function () {
         ->name('api.ticket.assign.to')
         ->middleware('permission:ticket.assignTo');
 
+    Route::put('/update-status/{id}', [TicketController::class, 'updateStatus'])
+        ->name('api.ticket.update.status');
+
     Route::put('/{id}', [TicketController::class, 'update'])
         ->name('api.ticket.update')
         ->middleware('permission:ticket.edit');

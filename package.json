@@ -23,6 +23,7 @@
         "pusher-js": "^8.0.0",
         "snakecase-keys": "^5.4.4",
         "vue": "^3.2.36",
+        "vue-draggable": "^2.0.6",
         "vue-loader": "^17.0.1",
         "vue-multiselect": "^3.0.0-alpha.2",
         "vue-router": "^4.1.6",

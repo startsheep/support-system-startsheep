@@ -6,6 +6,7 @@ import { createApp } from "vue";
 import { abilitiesPlugin } from "@casl/vue";
 import ability from "./store/services/ability";
 import ToastPlugin from "vue-toast-notification";
+import VueDraggable from "vue-draggable";
 
 import router from "./router";
 import store from "./store";

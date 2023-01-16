@@ -28,7 +28,7 @@ class TicketStatus extends Model
         'color',
     ];
 
-    public function ticket()
+    public function tickets()
     {
         return $this->hasMany(Ticket::class, 'ticket_status', 'id');
     }
