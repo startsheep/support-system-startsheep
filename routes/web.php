@@ -18,5 +18,5 @@ Route::get('/{any}', [PageController::class, 'index'])->where('any', '^(?!admin|
 Route::get('/admin/{any}', [PageController::class, 'admin']);
 Route::get('/auth/{any}', [PageController::class, 'auth']);
 Route::get('/email', function () {
-    return view('emails.reset-password');
+    return view('emails.assign-to');
 });

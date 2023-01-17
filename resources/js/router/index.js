@@ -8,27 +8,27 @@ const router = createRouter({
     linkActiveClass: "active",
 });
 
-// router.beforeEach(async (to, from, next) => {
-//     const token = Cookies.get("token");
-//     if (to.meta.middleware === "auth") {
-//         if (!token) {
-//             next({
-//                 name: "Login",
-//             });
-//         } else {
-//             next();
-//         }
-//     }
-//     if (to.meta.middleware === "guest") {
-//         if (token) {
-//             next({
-//                 name: "Dashboard",
-//             });
-//         } else {
-//             next();
-//         }
-//     }
-//     next();
-// });
+router.beforeEach(async (to, from, next) => {
+    const token = Cookies.get("token");
+    if (to.meta.middleware === "auth") {
+        if (!token) {
+            next({
+                name: "Login",
+            });
+        } else {
+            next();
+        }
+    }
+    if (to.meta.middleware === "guest") {
+        if (token) {
+            next({
+                name: "Dashboard",
+            });
+        } else {
+            next();
+        }
+    }
+    next();
+});
 
 export default router;

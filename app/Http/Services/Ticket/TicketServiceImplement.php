@@ -4,12 +4,14 @@ namespace App\Http\Services\Ticket;
 
 use LaravelEasyRepository\Service;
 use App\Http\Repositories\Ticket\TicketRepository;
+use App\Http\Traits\SendEmail;
 use App\Models\TicketStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class TicketServiceImplement extends Service implements TicketService
 {
+    use SendEmail;
 
     /**
      * don't change $this->mainRepository variable name
@@ -77,6 +79,11 @@ class TicketServiceImplement extends Service implements TicketService
                 $this->multipleUpload($attributes['files'], $ticket);
             }
 
+            if ($attributes['staff_id']) {
+                $tickets = $this->mainRepository->getWhereIn([$id]);
+                $this->sendEmailAssignTo($tickets, $attributes['staff_id']);
+            }
+
             return $ticket->update($attributes);
         });
 
@@ -114,6 +121,8 @@ class TicketServiceImplement extends Service implements TicketService
     public function assignTo(array $data)
     {
         $tickets = $this->mainRepository->getWhereIn($data['assigned_data']);
+
+        $this->sendEmailAssignTo($tickets, $data['staff_id']);
 
         return $tickets->update(['staff_id' => $data['staff_id']]);
     }
