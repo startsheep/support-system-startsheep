@@ -4,12 +4,14 @@ namespace App\Http\Services\Admin;
 
 use LaravelEasyRepository\Service;
 use App\Http\Repositories\User\UserRepository;
+use App\Http\Traits\SendEmail;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
 
 class AdminServiceImplement extends Service implements AdminService
 {
+    use SendEmail;
 
     /**
      * don't change $this->mainRepository variable name
@@ -30,6 +32,8 @@ class AdminServiceImplement extends Service implements AdminService
 
         $user = $this->mainRepository->create($attributes);
         $user->assignRole($role);
+
+        self::sendEmail($user->email);
 
         return $user;
     }

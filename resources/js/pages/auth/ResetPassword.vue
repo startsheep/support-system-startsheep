@@ -1,59 +1,49 @@
 <script>
-import Cookie from "js-cookie";
-import Loader from "../../components/Loader.vue";
+import Success from "../../components/notifications/Success.vue";
 
 export default {
     data() {
         return {
-            user: {
-                email: "",
-                password: "",
-            },
+            email: "",
+            message: "",
             isLoading: false,
             errors: {},
         };
     },
-    computed: {
-        beforeRedirect() {
-            let route = this.$route.href.split("?")[1];
-            if (route) {
-                return route.split("=")[1];
-            }
-            return false;
-        },
-    },
     methods: {
         handleSubmit() {
             this.isLoading = true;
+            const params = {
+                email: this.email,
+            };
             this.$store
-                .dispatch("postData", ["auth/login", this.user])
+                .dispatch("postData", ["auth/forgot-password", params])
                 .then((response) => {
-                    Cookie.set("token", response.data.token);
-                    Cookie.set("user", JSON.stringify(response.data.user));
-                    if (this.beforeRedirect) {
-                        window.location.replace(this.beforeRedirect);
-                    } else {
-                        window.location.replace("/");
-                    }
+                    this.isLoading = false;
+                    this.message = "password reset link sent successfully";
+                    $("#successModal").modal("show");
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    this.errors = error.response.data.meta.messages;
+                    this.errors = error.response.data.messages;
                 });
         },
     },
-    components: { Loader },
+    components: { Success },
 };
 </script>
 <template>
     <main class="d-flex w-100">
-        <Loader v-if="isLoading" />
         <div class="container d-flex flex-column">
             <div class="row vh-100">
                 <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
                     <div class="d-table-cell align-middle">
                         <div class="text-center mt-4">
-                            <h1 class="h2">Welcome to SSS</h1>
+                            <h1 class="h2">Forgot Your Password?</h1>
+                            <span
+                                >Enter your email and we will send you a link to
+                                get back into your account</span
+                            >
                         </div>
 
                         <div class="card">
@@ -69,10 +59,10 @@ export default {
                                                 type="email"
                                                 name="email"
                                                 placeholder="Enter your email"
+                                                v-model="email"
                                                 :class="{
                                                     'is-invalid': errors.email,
                                                 }"
-                                                v-model="user.email"
                                             />
                                             <div
                                                 class="invalid-feedback"
@@ -85,42 +75,12 @@ export default {
                                                 {{ error }}
                                             </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label"
-                                                >Password</label
-                                            >
-                                            <input
-                                                class="form-control form-control-lg"
-                                                type="password"
-                                                name="password"
-                                                placeholder="Enter your password"
-                                                v-model="user.password"
-                                                :class="{
-                                                    'is-invalid':
-                                                        errors.password,
-                                                }"
-                                            />
-                                            <div
-                                                class="invalid-feedback"
-                                                v-if="errors.password"
-                                                v-for="(
-                                                    error, index
-                                                ) in errors.password"
-                                                :key="index"
-                                            >
-                                                {{ error }}
-                                            </div>
-                                            <router-link
-                                                :to="{ name: 'Reset Password' }"
-                                                >Forgot password?</router-link
-                                            >
-                                        </div>
                                         <div class="text-center mt-3">
                                             <button
                                                 type="submit"
                                                 class="btn btn-lg btn-primary"
                                             >
-                                                Sign in
+                                                Submit
                                             </button>
                                         </div>
                                     </form>
@@ -132,5 +92,5 @@ export default {
             </div>
         </div>
     </main>
+    <Success :msg="message" :route="{ name: 'Login' }" />
 </template>
-<style></style>

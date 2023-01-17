@@ -27,6 +27,11 @@ export default {
             user: {},
         };
     },
+    computed: {
+        beforeRedirect() {
+            return this.$route.fullPath;
+        },
+    },
     watch: {
         "$route.params.search": {
             handler: function (search) {
@@ -51,8 +56,15 @@ export default {
                         Cookie.remove("token");
                         Cookie.remove("user");
                     });
+
                 if (!Cookie.get("token")) {
-                    window.location.replace("/auth/login");
+                    if (this.beforeRedirect) {
+                        window.location.replace(
+                            "/auth/login?redirect=" + this.beforeRedirect
+                        );
+                    } else {
+                        window.location.replace("/auth/login");
+                    }
                 }
             },
             deep: true,

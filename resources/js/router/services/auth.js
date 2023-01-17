@@ -8,4 +8,18 @@ export default [
             middleware: "guest",
         },
     },
+    {
+        path: "/auth/new-password",
+        name: "New Password",
+        component: () => import("../../pages/auth/NewPassword.vue"),
+    },
+    {
+        path: "/auth/reset-password",
+        name: "Reset Password",
+        component: () => import("../../pages/auth/ResetPassword.vue"),
+
+        meta: {
+            middleware: "guest",
+        },
+    },
 ];

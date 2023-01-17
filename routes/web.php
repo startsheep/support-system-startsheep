@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{any}', [PageController::class, 'index'])->where('any', '^(?!admin|auth).*$');
+Route::get('/{any}', [PageController::class, 'index'])->where('any', '^(?!admin|auth|email).*$');
 Route::get('/admin/{any}', [PageController::class, 'admin']);
 Route::get('/auth/{any}', [PageController::class, 'auth']);
+Route::get('/email', function () {
+    return view('emails.reset-password');
+});

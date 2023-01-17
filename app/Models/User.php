@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\SendEmailResetPassword;
+use App\Notifications\SendEmailVerification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -53,6 +56,13 @@ class User extends Authenticatable
     public function setPasswordAttribute($password)
     {
         return $this->attributes['password'] = Hash::make($password);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $url = url('/auth/new-password?token=' . $token . '&email=' . $this->email);
+
+        $this->notify(new SendEmailResetPassword($url));
     }
 
     public function getRoleAdmin()

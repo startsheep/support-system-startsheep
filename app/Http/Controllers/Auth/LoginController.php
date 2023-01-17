@@ -34,6 +34,12 @@ class LoginController extends Controller
             ], 400);
         }
 
+        if ($user->email_verified_at === null) {
+            return response()->json([
+                'message' => 'please verify your email!',
+            ], 400);
+        }
+
         $role = strtolower($user->roles->pluck('name'));
 
         $token = $user->createToken('api', [$role]);
